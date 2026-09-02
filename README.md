@@ -1,28 +1,28 @@
-# Proyecto Laravel + React
+# Laravel + React Project
 
-Este repositorio está dividido en dos partes principales:
+This repository is divided into two main parts:
 
-- laravel-api/: backend desarrollado en Laravel
-- reactfront/: frontend desarrollado en React
+- laravel-api/: backend built with Laravel
+- reactfront/: frontend built with React
 
-## Objetivo
+## Objective
 
-La aplicación está diseñada como un proyecto full-stack de práctica, donde el backend expone una API REST y el frontend consume esos endpoints para mostrar la información en la interfaz.
+The application is designed as a full-stack practice project, where the backend exposes a REST API and the frontend consumes those endpoints to display information in the UI.
 
-## Estructura del proyecto
+## Project Structure
 
 ### Backend (Laravel)
-Ruta: laravel-api/
+Path: laravel-api/
 
-Contiene:
-- configuración Laravel
-- modelos
-- controladores
-- rutas API
-- migraciones y seeders
-- lógica de negocio y acceso a base de datos
+Contains:
+- Laravel configuration
+- models
+- controllers
+- API routes
+- migrations and seeders
+- business logic and database access
 
-Comandos comunes:
+Common commands:
 - cd api
 - composer install
 - cp .env.example .env
@@ -31,133 +31,133 @@ Comandos comunes:
 - php artisan serve
 
 ### Frontend (React)
-Ruta: reactfront/
+Path: reactfront/
 
-Contiene:
-- componentes
-- páginas
-- estilos
-- lógica del cliente
-- consumo de la API
+Contains:
+- components
+- pages
+- styles
+- client-side logic
+- API consumption
 
-Comandos comunes:
+Common commands:
 - cd reactfront
 - npm install
 - npm start
 
-## Convenciones de trabajo
+## Working Conventions
 
-- El backend siempre se trabaja dentro de laravel-api/
-- El frontend siempre se trabaja dentro de reactfront/
-- Si se cambia la API, también debe revisarse el frontend que la consume
-- No modificar archivos generados en build/ salvo que se indique explícitamente
-- Las migraciones y modelos pertenecen al backend
+- The backend is always worked on inside laravel-api/
+- The frontend is always worked on inside reactfront/
+- If the API is changed, the frontend that consumes it must also be reviewed
+- Do not modify files generated in build/ unless explicitly indicated
+- Migrations and models belong to the backend
 
-## Variables de entorno
+## Environment Variables
 
-El backend necesita una configuración de base de datos válida en api/.env.
-El frontend normalmente apunta a la API con una URL local, por ejemplo:
+The backend needs a valid database configuration in api/.env.
+The frontend normally points to the API with a local URL, for example:
 - http://localhost:8741/api
 
-## Flujo típico
+## Typical Workflow
 
-1. Ejecutar la API en Laravel
-2. Ejecutar el frontend en React
-3. Verificar endpoints del backend
-4. Conectar la UI con esos endpoints
-5. Validar cambios con migraciones, pruebas o pruebas manuales
+1. Run the API in Laravel
+2. Run the frontend in React
+3. Verify backend endpoints
+4. Connect the UI with those endpoints
+5. Validate changes with migrations, tests, or manual testing
 
-## Notas para asistentes o agentes
+## Notes for Assistants or Agents
 
-Este proyecto no es un único app monolítica; está separado por responsabilidades:
-- laravel-api/ = lógica de negocio, persistencia y API
-- reactfront/ = interfaz visual y consumo de datos
+This project is not a single monolithic app; it is separated by responsibilities:
+- laravel-api/ = business logic, persistence, and API
+- reactfront/ = visual interface and data consumption
 
-Cuando se trabaje aquí, siempre conviene identificar primero si el cambio pertenece al backend o al frontend antes de editar archivos.
+When working here, it is always advisable to first identify whether the change belongs to the backend or the frontend before editing files.
 
-## Archivos importantes
+## Important Files
 
 - laravel-api/routes/api.php
 - laravel-api/app/Models/
-- laravel-pi/app/Http/Controllers/
+- laravel-api/app/Http/Controllers/
 - laravel-api/database/migrations/
 - reactfront/src/
 
-## Ejecución del proyecto
+## Running the Project
 
-Para ejecutar el entorno de desarrollo completo, es necesario abrir dos terminales independientes, una para el backend y otra para el frontend:
+To run the full development environment, you need to open two independent terminals, one for the backend and one for the frontend:
 
-### 1. Servidor Backend (Laravel)
-En la terminal, navega a la carpeta de la API y levanta el servidor en el puerto configurado:
+### 1. Backend Server (Laravel)
+In the terminal, navigate to the API folder and start the server on the configured port:
 
 ```bash
 $ cd laravel-api
-# Asegúrate de tener configurado APP_URL=http://localhost:8741 en tu archivo .env
+# Make sure you have APP_URL=http://localhost:8741 configured in your .env file
 $ php artisan serve --port=8741
 ```
 
 
-### 2. Entorno Frontend (React)
-En una segunda terminal, navega a la carpeta del frontend y ejecuta el servidor de desarrollo:
+### 2. Frontend Environment (React)
+In a second terminal, navigate to the frontend folder and run the development server:
 
 ```bash
 $ cd reactfront
 $ npm run dev
 ```
-Nota: La API estará disponible en http://localhost:8741 y el frontend se conectará a ella a través de esa URL. Asegúrate de que las variables de entorno en reactfront/ (o donde definas la URL base de la API) apunten correctamente a este puerto.
+Note: The API will be available at http://localhost:8741 and the frontend will connect to it through that URL. Make sure that the environment variables in reactfront/ (or wherever you define the base API URL) point correctly to this port.
 
-## API Reference (Resumen)
+## API Reference (Summary)
 
 Base URL: `http://localhost:8741/api`
 
-- POST `/register` — Registrar usuario
-- POST `/login` — Iniciar sesión (devuelve `token`)
-- GET `/products` — Listar productos (protected)
-- POST `/products` — Crear producto (protected)
-- GET `/products/{id}` — Ver producto (protected)
-- PUT `/products/{id}` — Actualizar producto (protected)
-- DELETE `/products/{id}` — Eliminar producto (protected)
+- POST `/register` — Register user
+- POST `/login` — Log in (returns `token`)
+- GET `/products` — List products (protected)
+- POST `/products` — Create product (protected)
+- GET `/products/{id}` — View product (protected)
+- PUT `/products/{id}` — Update product (protected)
+- DELETE `/products/{id}` — Delete product (protected)
 
-Autenticación: JWT
-- El backend usa `php-open-source-saver/jwt-auth`. Tras `register` y `login` obtendrás un `token` JWT.
-- Incluye el token en las peticiones protegidas con el header: `Authorization: Bearer <token>`
+Authentication: JWT
+- The backend uses `php-open-source-saver/jwt-auth`. After `register` and `login` you will get a JWT `token`.
+- Include the token in protected requests with the header: `Authorization: Bearer <token>`
 
-Ejemplos rápidos (curl)
+Quick examples (curl)
 
-1) Registrar usuario:
+1) Register user:
 
 ```bash
 curl -i -X POST http://127.0.0.1:8741/api/register \
-	-H "Content-Type: application/json" \
-	-d '{"name":"TestUser","email":"test@example.com","password":"12345678","password_confirmation":"12345678"}'
+        -H "Content-Type: application/json" \
+        -d '{"name":"TestUser","email":"test@example.com","password":"12345678","password_confirmation":"12345678"}'
 ```
 
-2) Login (obtiene `token`):
+2) Login (gets `token`):
 
 ```bash
 curl -i -X POST http://127.0.0.1:8741/api/login \
-	-H "Content-Type: application/json" \
-	-d '{"email":"test@example.com","password":"12345678"}'
+        -H "Content-Type: application/json" \
+        -d '{"email":"test@example.com","password":"12345678"}'
 ```
 
-Respuesta esperada (ejemplo):
+Expected response (example):
 
 ```json
 {"message":"User logged in successfully","user":{...},"token":"<JWT>","token_type":"bearer","expires_in":3600}
 ```
 
-3) Crear producto (ejemplo):
+3) Create product (example):
 
 ```bash
 curl -i -X POST http://127.0.0.1:8741/api/products \
-	-H "Content-Type: application/json" \
-	-H "Authorization: Bearer <JWT>" \
-	-d '{"name":"Test Product","description":"A test","price":9.99,"stock":10}'
+        -H "Content-Type: application/json" \
+        -H "Authorization: Bearer <JWT>" \
+        -d '{"name":"Test Product","description":"A test","price":9.99,"stock":10}'
 ```
 
-Migraciones y pasos adicionales
-- Copia `.env` y configura DB (MySQL) y `APP_URL=http://localhost:8741`.
-- Ejecuta:
+Migrations and additional steps
+- Copy `.env` and configure DB (MySQL) and `APP_URL=http://localhost:8741`.
+- Run:
 
 ```bash
 cd laravel-api
@@ -169,7 +169,7 @@ php artisan migrate
 php artisan serve --port=8741
 ```
 
-Notas rápidas
-- Si ves errores relacionados con CSRF al probar endpoints API, asegúrate de que las rutas API se cargan por el stack API (en este proyecto `bootstrap/app.php` se ha configurado para ello).
-- El `User` model implementa la interfaz requerida para JWT; si cambias el paquete de JWT revisa `app/Models/User.php`.
-- Para desarrollo local usa el puerto `8741` (estandarizado en este repo).
+Quick Notes
+- If you see errors related to CSRF when testing API endpoints, make sure that the API routes are loaded by the API stack (in this project `bootstrap/app.php` has been configured for that).
+- The `User` model implements the required interface for JWT; if you change the JWT package check `app/Models/User.php`.
+- For local development use port `8741` (standardized in this repo).
