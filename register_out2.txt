@@ -1,0 +1,10 @@
+HTTP/1.1 422 Unprocessable Content
+Host: 127.0.0.1:8741
+Connection: close
+X-Powered-By: PHP/8.3.6
+Cache-Control: no-cache, private
+Date: Sat, 22 Aug 2026 03:18:45 GMT
+Content-Type: application/json
+Access-Control-Allow-Origin: *
+
+{"message":"Validation failed","errors":{"email":["The email has already been taken."]}}

@@ -1,0 +1,15 @@
+{
+  "brand": "Agasaja ERP",
+  "language": "Language",
+  "login": "Login",
+  "register": "Register",
+  "welcomeTitle": "Welcome to Agasaja ERP",
+  "welcomeSubtitle": "Manage your processes, inventory, and operations with a clear and modern experience.",
+  "tagline": "Solutions for your business",
+  "name": "Name",
+  "email": "Email",
+  "password": "Password",
+  "passwordConfirmation": "Confirm password",
+  "dashboardTitle": "Dashboard",
+  "dashboardSubtitle": "Main panel"
+}

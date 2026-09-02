@@ -1,0 +1,10 @@
+HTTP/1.1 201 Created
+Host: 127.0.0.1:8741
+Connection: close
+X-Powered-By: PHP/8.3.6
+Cache-Control: no-cache, private
+Date: Sat, 22 Aug 2026 03:21:38 GMT
+Content-Type: application/json
+Access-Control-Allow-Origin: *
+
+{"user_id":1,"name":"Inserted Product","description":"Created via test","price":19.99,"stock":5,"updated_at":"2026-08-22T03:21:38.000000Z","created_at":"2026-08-22T03:21:38.000000Z","id":1}
