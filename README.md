@@ -1,5 +1,6 @@
 # Laravel + React Project
 
+
 This repository is divided into two main parts:
 
 - laravel-api/: backend built with Laravel
