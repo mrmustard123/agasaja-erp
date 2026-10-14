@@ -4,9 +4,10 @@ import { t, type Language } from '../i18n'
 
 type RegisterPageProps = {
   language: Language
+  onAuthChange?: () => void
 }
 
-export function RegisterPage({ language }: RegisterPageProps) {
+export function RegisterPage({ language, onAuthChange }: RegisterPageProps) {
   const textReg = (key: string) => t(key, language)
   const navigate = useNavigate()
   const [loading, setLoading] = useState(false)
@@ -50,7 +51,10 @@ export function RegisterPage({ language }: RegisterPageProps) {
       }
 
       // store token and navigate
-      if (data.token) localStorage.setItem('auth_token', data.token)
+      if (data.token) {
+        localStorage.setItem('auth_token', data.token)
+        onAuthChange?.()
+      }
       navigate('/dashboard')
     } catch (err) {
       setErrors('Network error')

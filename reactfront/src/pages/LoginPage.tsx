@@ -4,14 +4,17 @@ import { t, type Language } from '../i18n'
 
 type LoginPageProps = {
   language: Language
+  onAuthChange?: () => void
 }
 
-export function LoginPage({ language }: LoginPageProps) {
+export function LoginPage({ language, onAuthChange }: LoginPageProps) {
   const textLogin = (key: string) => t(key, language)
   const navigate = useNavigate()
 
   const handleSubmit = (event: SyntheticEvent<HTMLFormElement>) => {
     event.preventDefault()
+    localStorage.setItem('auth_token', 'demo-token')
+    onAuthChange?.()
     navigate('/dashboard')
   }
 

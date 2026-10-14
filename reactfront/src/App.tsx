@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Route, Routes } from 'react-router-dom'
+import { Route, Routes, useNavigate } from 'react-router-dom'
 import './App.css'
 import { Header } from './components/Header'
 import { t, type Language } from './i18n'
@@ -9,10 +9,23 @@ import { DashboardPage } from './pages/DashboardPage'
 
 function App() {
   const [language, setLanguage] = useState<Language>('es')
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(() => Boolean(localStorage.getItem('auth_token')))
+  const navigate = useNavigate()
+
+  const handleLogout = () => {
+    localStorage.removeItem('auth_token')
+    setIsLoggedIn(false)
+    navigate('/login')
+  }
 
   return (
     <div className="app-shell">
-      <Header language={language} onLanguageChange={setLanguage} />
+      <Header
+        language={language}
+        onLanguageChange={setLanguage}
+        isLoggedIn={isLoggedIn}
+        onLogout={handleLogout}
+      />
 
       <Routes>
         <Route
@@ -37,8 +50,14 @@ function App() {
           }
         />
 
-        <Route path="/login" element={<LoginPage language={language} />} />
-        <Route path="/register" element={<RegisterPage language={language} />} />
+        <Route
+          path="/login"
+          element={<LoginPage language={language} onAuthChange={() => setIsLoggedIn(true)} />}
+        />
+        <Route
+          path="/register"
+          element={<RegisterPage language={language} onAuthChange={() => setIsLoggedIn(true)} />}
+        />
         <Route path="/dashboard" element={<DashboardPage language={language} />} />
       </Routes>
     </div>

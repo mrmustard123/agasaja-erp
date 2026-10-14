@@ -68,6 +68,136 @@ The frontend normally points to the API with a local URL, for example:
 4. Connect the UI with those endpoints
 5. Validate changes with migrations, tests, or manual testing
 
+## Shared Hosting Deployment (Frontend built into Laravel public folder)
+
+This project can be deployed to a shared hosting environment by publishing the React frontend build into the Laravel public directory and pointing the domain/subdomain to that folder.
+
+### Recommended deployment layout
+
+```text
+public_html/
+  agasaja-erp/
+    laravel-api/
+      public/
+```
+
+If the subdomain points to the Laravel public folder, the browser loads the generated `index.html` file and the built front-end assets are served correctly.
+
+### 1. Build the frontend
+
+From the frontend folder:
+
+```bash
+cd reactfront
+npm install
+npm run build
+```
+
+This generates the production files in:
+
+```text
+reactfront/dist/
+```
+
+### 2. Publish the frontend build to the Laravel public folder
+
+Copy the contents of `reactfront/dist/` into the Laravel public directory:
+
+```bash
+cp -r reactfront/dist/* laravel-api/public/
+```
+
+If you use GitHub deployment automation, commit the built files or deploy the project in a way that copies the build output to `laravel-api/public/` before upload.
+
+### 3. Point the subdomain to the Laravel public folder
+
+In the hosting control panel, set the subdomain document root to the folder that contains the Laravel public directory, for example:
+
+```text
+/home/your-user/domains/your-domain.com/public_html/agasaja-erp/laravel-api/public
+```
+
+That folder is the one serving the application to the browser. If the root contains the generated `index.html`, the site loads as normal.
+
+### 4. SPA routing on shared hosting
+
+Because the frontend uses client-side routes, the server must serve `index.html` for unknown paths. In Apache, this is usually done with a `.htaccess` file in the public folder:
+
+```apache
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /
+    RewriteRule ^index\.html$ - [L]
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule . /index.html [L]
+</IfModule>
+```
+
+### 5. GitHub deployment flow
+
+A common GitHub + Hostinger setup is:
+
+1. Commit the project to GitHub
+2. Push to the main branch
+3. In Hostinger, connect the repository and trigger a redeploy
+4. Make sure the deployment copies the built frontend output to `laravel-api/public/`
+5. Point the subdomain to the Laravel public folder
+
+This way the public folder contains the generated React assets, and the browser loads the app from the root of the subdomain.
+
+### 6. Backend configuration in production
+
+In the Laravel backend, configure `.env` for the production database and domain:
+
+```dotenv
+APP_ENV=production
+APP_DEBUG=false
+APP_URL=https://your-domain.com
+
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=your_database
+DB_USERNAME=your_user
+DB_PASSWORD=your_password
+```
+
+Also ensure the Laravel framework tables exist in the database:
+
+```bash
+php artisan session:table
+php artisan cache:table
+php artisan queue:table
+php artisan queue:failed-table
+php artisan queue:batches-table
+php artisan migrate
+```
+
+### 7. Frontend API base URL in production
+
+Replace localhost endpoints with the production API URL, for example:
+
+```text
+https://your-domain.com/api
+```
+
+or, if using a dedicated API subdomain:
+
+```text
+https://api.your-domain.com/api
+```
+
+### 8. Final deployment checklist
+
+- Build the React app: `npm run build`
+- Copy the files into `laravel-api/public/`
+- Commit and push changes to GitHub
+- Redeploy from Hostinger
+- Set the subdomain document root to the Laravel public folder
+- Verify `index.html` loads and frontend routes render correctly
+- Verify API calls are pointed to production URLs instead of `localhost`
+
 ## Notes for Assistants or Agents
 
 This project is not a single monolithic app; it is separated by responsibilities:

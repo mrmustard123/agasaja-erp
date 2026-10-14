@@ -2,6 +2,7 @@
   "brand": "Agasaja ERP",
   "language": "Language",
   "login": "Login",
+  "logout": "Logout",
   "register": "Register",
   "welcomeTitle": "Welcome to Agasaja ERP",
   "welcomeSubtitle": "Manage your processes, inventory, and operations with a clear and modern experience.",
