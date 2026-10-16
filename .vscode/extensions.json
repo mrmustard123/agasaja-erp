@@ -1,0 +1,7 @@
+{
+  "recommendations": [
+    "ms-vscode.js-debug",
+    "xdebug.php-debug",
+    "ms-vscode.vscode-typescript-next"
+  ]
+}

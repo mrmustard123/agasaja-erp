@@ -22,6 +22,7 @@ laravel-api/public/build
 laravel-api/public/fonts-manifest.dev.json
 laravel-api/public/hot
 laravel-api/public/storage
+laravel-api/public/index.php
 laravel-api/storage/*.key
 laravel-api/storage/pail
 #laravel-api/vendor

@@ -21,3 +21,18 @@ test('renders welcome page and navigates via login submit to dashboard', async (
   // Dashboard heading should show
   expect(await screen.findByRole('heading', { name: /Panel principal|Dashboard/i })).toBeTruthy()
 })
+
+test('shows dashboard sidebar with collapsible menu sections', async () => {
+  render(
+    <MemoryRouter initialEntries={['/dashboard']}>
+      <App />
+    </MemoryRouter>,
+  )
+
+  const contabilidadButton = await screen.findByRole('button', { name: /contabilidad|accounting/i })
+  expect(contabilidadButton).toBeTruthy()
+
+  fireEvent.click(contabilidadButton)
+
+  expect(await screen.findByRole('link', { name: /asientos|entries/i })).toBeTruthy()
+})

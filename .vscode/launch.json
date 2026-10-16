@@ -1,0 +1,26 @@
+{
+    "version": "0.2.0",
+    "configurations": 
+    [
+        {
+          "name": "Listen for Xdebug",
+          "type": "php",
+          "request": "launch",
+          "port": 9003,
+          "pathMappings": {
+            "/var/www/html/agasaja-erp/laravel-api": "${workspaceFolder}/laravel-api"
+          }
+        },
+        {
+          "name": "Launch Firefox debug",
+          "type": "firefox",
+          "request": "launch",
+          "url": "http://localhost:5173/",
+          "webRoot": "${workspaceFolder}/reactfront",
+          "keepProfileChanges": true,
+          "profile": "default",
+          "reAttach": true
+        }
+            
+    ]
+}

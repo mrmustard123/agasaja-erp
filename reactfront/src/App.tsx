@@ -59,6 +59,7 @@ function App() {
           element={<RegisterPage language={language} onAuthChange={() => setIsLoggedIn(true)} />}
         />
         <Route path="/dashboard" element={<DashboardPage language={language} />} />
+        <Route path="/dashboard/:viewKey" element={<DashboardPage language={language} />} />
       </Routes>
     </div>
   )
