@@ -36,3 +36,23 @@ test('shows dashboard sidebar with collapsible menu sections', async () => {
 
   expect(await screen.findByRole('link', { name: /asientos|entries/i })).toBeTruthy()
 })
+
+test('allows opening and closing the dashboard sidebar with a hamburger button', async () => {
+  render(
+    <MemoryRouter initialEntries={['/dashboard']}>
+      <App />
+    </MemoryRouter>,
+  )
+
+  const closeButton = await screen.findByRole('button', { name: /cerrar menú|close menu/i })
+  expect(closeButton).toBeTruthy()
+
+  fireEvent.click(closeButton)
+
+  const openButton = await screen.findByRole('button', { name: /abrir menú|open menu/i })
+  expect(openButton).toBeTruthy()
+
+  fireEvent.click(openButton)
+
+  expect(await screen.findByRole('button', { name: /cerrar menú|close menu/i })).toBeTruthy()
+})

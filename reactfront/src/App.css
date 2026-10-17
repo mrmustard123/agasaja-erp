@@ -1,4 +1,5 @@
 .app-shell {
+  width: 100%;
   min-height: 100vh;
   background: linear-gradient(135deg, #f7f8fc 0%, #edf3ff 100%);
   color: #172033;
@@ -234,8 +235,9 @@
 }
 
 .dashboard-page {
-  display: grid;
-  place-items: center;
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
   min-height: calc(100vh - 74px);
   padding: 2rem;
 }
@@ -243,15 +245,41 @@
 .dashboard-layout {
   display: flex;
   align-items: flex-start;
-  gap: 1.5rem;
+  gap: 1.25rem;
   width: min(1400px, 100%);
   margin: 0 auto;
   padding: 1.5rem 1.25rem 2rem;
+  transition: all 0.3s ease;
 }
 
 .dashboard-workspace {
   flex: 1;
   min-width: 0;
+  transition: margin-left 0.3s ease;
+}
+
+.sidebar-hamburger {
+  width: 3rem;
+  height: 3rem;
+  border: none;
+  border-radius: 0.9rem;
+  background: rgba(15, 23, 42, 0.96);
+  box-shadow: 0 12px 24px rgba(15, 23, 42, 0.18);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.28rem;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.sidebar-hamburger span {
+  display: block;
+  width: 1.35rem;
+  height: 2px;
+  border-radius: 999px;
+  background: #f8fafc;
 }
 
 .dashboard-sidebar {
@@ -263,6 +291,39 @@
   box-shadow: 0 18px 60px rgba(15, 23, 42, 0.12);
   color: #e2e8f0;
   flex-shrink: 0;
+  overflow: hidden;
+  transition: width 0.3s ease, padding 0.3s ease, opacity 0.2s ease, transform 0.3s ease, border-width 0.3s ease;
+}
+
+.dashboard-layout.sidebar-collapsed .dashboard-sidebar {
+  width: 0;
+  padding: 0;
+  border-width: 0;
+  opacity: 0;
+  transform: translateX(-20px);
+  pointer-events: none;
+}
+
+.dashboard-layout.sidebar-open .dashboard-sidebar {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.sidebar-close-button {
+  width: 2.4rem;
+  height: 2.4rem;
+  border: none;
+  border-radius: 999px;
+  background: rgba(148, 163, 184, 0.12);
+  color: #f8fafc;
+  font-size: 1.6rem;
+  line-height: 1;
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  margin-bottom: 0.75rem;
 }
 
 .menu-group + .menu-group {

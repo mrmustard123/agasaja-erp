@@ -11,6 +11,7 @@ type DashboardProps = {
 
 export function DashboardPage({ language }: DashboardProps) {
   const { viewKey } = useParams()
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true)
   const [allowedIds, setAllowedIds] = useState<number[] | null>(null)
 
   useEffect(() => {
@@ -39,8 +40,12 @@ export function DashboardPage({ language }: DashboardProps) {
           return
         }
 
+        //Here we assign the response to functionalities
         const functionalites = Array.isArray(data.functionalities) ? data.functionalities : []
+        
+        //Here we assign functionalities to allowdIds        
         setAllowedIds(functionalites.map(Number))
+
       })
       .catch(() => {
         setAllowedIds(null)
@@ -58,8 +63,26 @@ export function DashboardPage({ language }: DashboardProps) {
   const tt = (key: string) => t(key, language)
 
   return (
-    <main className="dashboard-page dashboard-layout">
-      <SidebarMenu language={language} allowedIds={allowedIds} />
+    <main className={`dashboard-page dashboard-layout ${isSidebarOpen ? 'sidebar-open' : 'sidebar-collapsed'}`}>
+      {!isSidebarOpen && (
+        <button
+          type="button"
+          className="sidebar-hamburger"
+          aria-label="Abrir menú"
+          onClick={() => setIsSidebarOpen(true)}
+        >
+          <span />
+          <span />
+          <span />
+        </button>
+      )}
+
+      <SidebarMenu
+        language={language}
+        allowedIds={allowedIds}
+        isOpen={isSidebarOpen}
+        onClose={() => setIsSidebarOpen(false)}
+      />
 
       <section className="dashboard-workspace">
         {activeView ? (

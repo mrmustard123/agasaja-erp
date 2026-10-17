@@ -6,13 +6,13 @@ import { t, type Language } from '../i18n'
 type SidebarMenuProps = {
   language: Language
   allowedIds?: number[] | null
+  isOpen: boolean
+  onClose: () => void
 }
 
-export function SidebarMenu({ language, allowedIds }: SidebarMenuProps) {
+export function SidebarMenu({ language, allowedIds, isOpen, onClose }: SidebarMenuProps) {
   const location = useLocation()
   const [expanded, setExpanded] = useState<Record<string, boolean>>({})
-
-  console.log("allowedIds:", allowedIds);
 
   const effectiveAllowedIds = useMemo(() => {
     if (!allowedIds || allowedIds.length === 0) {
@@ -51,26 +51,32 @@ export function SidebarMenu({ language, allowedIds }: SidebarMenuProps) {
   }
 
   return (
-    <aside className="dashboard-sidebar">
+    <aside className={`dashboard-sidebar ${isOpen ? 'open' : 'closed'}`} aria-label="Menú lateral">
+      {isOpen && (
+        <button type="button" className="sidebar-close-button" aria-label="Cerrar menú" onClick={onClose}>
+          ×
+        </button>
+      )}
+
       {sections.map((section) => {
-        const isOpen = Boolean(expanded[section.key])
+        const isSectionOpen = Boolean(expanded[section.key])
 
         return (
           <div key={section.key} className="menu-group">
             <button
               type="button"
               className="menu-section-toggle"
-              aria-expanded={isOpen}
+              aria-expanded={isSectionOpen}
               aria-controls={`${section.key}-items`}
               onClick={() => toggleSection(section.key)}
             >
               <span>{t(section.titleKey, language)}</span>
               <span className="menu-chevron" aria-hidden="true">
-                {isOpen ? '▾' : '▸'}
+                {isSectionOpen ? '▾' : '▸'}
               </span>
             </button>
 
-            {isOpen && (
+            {isSectionOpen && (
               <nav id={`${section.key}-items`} className="menu-items" aria-label={t(section.titleKey, language)}>
                 {section.items
                   .filter((item) => !effectiveAllowedIds || effectiveAllowedIds.includes(item.permissionId))
