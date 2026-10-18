@@ -1,15 +1,17 @@
-import { useEffect, useMemo, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import {useEffect, useMemo, useState } from 'react'
+import { useParams, useNavigate } from 'react-router-dom'
 import { SidebarMenu } from '../components/SidebarMenu'
 import { allMenuItems } from '../data/menu'
 import { t, type Language } from '../i18n'
 import { ModuleViewPage } from './ModuleViewPage'
+//import {  useNavigate } from 
 
 type DashboardProps = {
   language: Language
 }
 
 export function DashboardPage({ language }: DashboardProps) {
+  const navigate = useNavigate()
   const { viewKey } = useParams()
   const [isSidebarOpen, setIsSidebarOpen] = useState(true)
   const [allowedIds, setAllowedIds] = useState<number[] | null>(null)
@@ -30,6 +32,13 @@ export function DashboardPage({ language }: DashboardProps) {
       },
     })
       .then((response) => {
+
+        if (response.status === 401) {
+          localStorage.removeItem('auth_token')
+          navigate('/login')   // const navigate = useNavigate() at the top of the component
+          return null
+        }
+
         if (!response.ok) {
           return null
         }
