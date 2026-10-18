@@ -25,6 +25,7 @@ export function DashboardPage({ language }: DashboardProps) {
       method: 'GET',
       headers: {
         Authorization: `Bearer ${token}`,
+        Accept: 'application/json',
         'Content-Type': 'application/json',
       },
     })
@@ -32,10 +33,11 @@ export function DashboardPage({ language }: DashboardProps) {
         if (!response.ok) {
           return null
         }
-
+        console.log("response: ", response.json);
         return response.json()
       })
       .then((data) => {
+        console.log('response data:', data)
         if (!data) {
           return
         }
@@ -48,9 +50,12 @@ export function DashboardPage({ language }: DashboardProps) {
 
       })
       .catch(() => {
+        console.log('catch: ', "No response setting null");
         setAllowedIds(null)
       })
   }, [])
+
+
 
   const activeView = useMemo(() => {
     if (!viewKey) {
