@@ -1,5 +1,181 @@
 # Laravel + React Project
 
+# TREE
+
+This is an example of the project directory tree.
+
+```text
+.
+├── docs
+│   ├── requirements
+│   │   ├── changes
+│   │   │   ├── 2026-10-17_FIX_Full-width screen applied.md
+...
+│   │   │   └── 2026-10-18_fix_problem_with_laravel-api_public_index.php.md
+│   │   └── features
+│   │       └── RF-001-sidebar-toggle-functionality.md
+│   ├── sessions
+│   │   └── 2026-10-17-chat-sidebarmenu-toggle-funcitonality.md
+│   └── TODO.md
+├── laravel-api
+│   ├── app
+│   │   ├── Http
+│   │   │   └── Controllers
+│   │   │       ├── AuthController.php
+│   │   │       ├── Controller.php
+│   │   │       ├── ProductController.php
+│   │   │       └── UserFunctionalitiesController.php
+│   │   ├── Models
+│   │   │   ├── Account.php
+│   │   │   ├── Apiario.php
+│   │   │   ├── BalanceChecksum.php
+│   │   │   ├── Bitacora.php
+│   │   │   ├── Configuration.php
+│   │   │   ├── Consignee.php
+│   │   │   ├── ConsigProd.php
+│   │   │   ├── Directive.php
+│   │   │   ├── Entry.php
+│   │   │   ├── Functionality.php
+│   │   │   ├── Movement.php
+│   │   │   ├── MovSupply.php
+│   │   │   ├── PendEmpresa.php
+│   │   │   ├── Pendiente.php
+│   │   │   ├── PosHistory.php
+│   │   │   ├── PosicDescripHist.php
+│   │   │   ├── PosicSaludHist.php
+│   │   │   ├── Position.php
+│   │   │   ├── ProdCostProd.php
+│   │   │   ├── ProductCost.php
+│   │   │   ├── Product.php
+│   │   │   ├── ProductPrice.php
+│   │   │   ├── ProductProduct.php
+│   │   │   ├── ProductSupply.php
+│   │   │   ├── Supply.php
+│   │   │   ├── SupplyPrice.php
+│   │   │   ├── User.php
+│   │   │   └── UsersGroup.php
+│   │   └── Providers
+│   │       ├── AppServiceProvider.php
+│   │       └── RouteServiceProvider.php
+│   ├── artisan
+│   ├── bootstrap
+│   │   ├── app.php
+│   │   ├── cache
+│   │   │   ├── packages.php
+│   │   │   └── services.php
+│   │   └── providers.php
+│   ├── composer.json
+│   ├── composer.lock
+│   ├── config
+│   │   ├── app.php
+│   │   ├── auth.php
+│   │   ├── cache.php
+│   │   ├── database.php
+│   │   ├── filesystems.php
+│   │   ├── jwt.php
+│   │   ├── logging.php
+│   │   ├── mail.php
+│   │   ├── queue.php
+│   │   ├── services.php
+│   │   └── session.php
+│   ├── database
+│   │   ├── database.sqlite
+│   │   ├── factories
+│   │   │   └── UserFactory.php
+│   │   ├── migrations
+│   │   │   ├── 2026_08_23_215144_create_account_table.php
+│   │   │   ├── 2026_08_23_215144_create_apiario_table.php
+...
+│   │   └── seeders
+│   │       └── DatabaseSeeder.php
+│   ├── package.json
+│   ├── phpunit.xml
+│   ├── public
+│   │   ├── assets
+│   │   │   ├── index-Bwzvr3lh.css
+...
+│   │   ├── favicon.ico
+│   │   ├── favicon.svg
+│   │   ├── icons.svg
+│   │   ├── index.html
+│   │   ├── index.php
+│   │   ├── robots.txt
+│   │   └── test.php
+│   ├── README.md
+│   ├── resources
+│   │   ├── css
+│   │   │   └── app.css
+│   │   ├── js
+│   │   │   └── app.js
+│   │   └── views
+│   │       └── welcome.blade.php
+│   ├── routes
+│   │   ├── api.php
+│   │   ├── console.php
+│   │   └── web.php
+│   ├── storage
+│   │   ├── app
+│   │   │   ├── private
+│   │   │   └── public
+│   │   ├── framework
+│   │   │   ├── cache
+│   │   │   │   └── data
+│   │   │   ├── sessions
+│   │   │   ├── testing
+│   │   │   └── views
+│   │   └── logs
+│   ├── tests
+│   │   ├── Feature
+│   │   │   └── ExampleTest.php
+│   │   ├── TestCase.php
+│   │   └── Unit
+│   │       └── ExampleTest.php
+│   └── vite.config.js
+├── package-lock.json
+├── reactfront
+│   ├── backup1.gitignore.txt
+│   ├── dist
+│   ├── eslint.config.js
+│   ├── index.html
+│   ├── package.json
+│   ├── package-lock.json
+│   ├── public
+│   │   ├── favicon.svg
+│   │   └── icons.svg
+│   ├── README.md
+│   ├── src
+│   │   ├── App.css
+│   │   ├── App.tsx
+│   │   ├── assets
+│   │   │   ├── hero.png
+│   │   │   ├── react.svg
+│   │   │   └── vite.svg
+│   │   ├── components
+│   │   │   ├── Header.tsx
+│   │   │   └── SidebarMenu.tsx
+│   │   ├── data
+│   │   │   └── menu.ts
+│   │   ├── i18n.ts
+│   │   ├── index.css
+│   │   ├── locales
+│   │   │   ├── en.json
+│   │   │   └── es.json
+│   │   ├── main.tsx
+│   │   ├── pages
+│   │   │   ├── DashboardPage.tsx
+│   │   │   ├── LoginPage.tsx
+│   │   │   ├── ModuleViewPage.tsx
+│   │   │   └── RegisterPage.tsx
+│   │   └── __tests__
+│   │       └── App.test.tsx
+│   ├── tsconfig.app.json
+│   ├── tsconfig.json
+│   ├── tsconfig.node.json
+│   └── vite.config.ts
+├── README.md
+├── temp
+    └── launch.json
+```
 
 This repository is divided into two main parts:
 
