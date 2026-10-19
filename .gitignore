@@ -1,78 +1,52 @@
-# Laravel
-laravel-api/.env
-
-
-laravel-api/*.log
-laravel-api/.DS_Store
+# ───────── Laravel (laravel-api) ─────────
 laravel-api/.env
 laravel-api/.env.backup
 laravel-api/.env.production
 laravel-api/.phpactor.json
 laravel-api/.phpunit.result.cache
+laravel-api/.phpunit.cache
 laravel-api/.codex
 laravel-api/.cursor/
 laravel-api/.idea
 laravel-api/.nova
-laravel-api/.phpunit.cache
 laravel-api/.vscode
 laravel-api/.zed
-#laravel-api/auth.json
-#laravel-api/node_modules
+laravel-api/_ide_helper.php
+laravel-api/Homestead.json
+laravel-api/Homestead.yaml
 laravel-api/public/build
 laravel-api/public/fonts-manifest.dev.json
 laravel-api/public/hot
 laravel-api/public/storage
-laravel-api/public/index.php
 laravel-api/storage/*.key
 laravel-api/storage/pail
-#laravel-api/vendor
-laravel-api/_ide_helper.php
-laravel-api/Homestead.json
-laravel-api/Homestead.yaml
-laravel-api/Thumbs.db
+# vendor se sube a propósito: NO ignorarlo
 
-
-
-# React
-
-
-# Logs
+# ───────── React (reactfront) ─────────
+#reactfront/node_modules
+reactfront/dist
+reactfront/dist-ssr
+reactfront/*.local
 reactfront/logs
-reactfront/*.log
 reactfront/npm-debug.log*
 reactfront/yarn-debug.log*
 reactfront/yarn-error.log*
 reactfront/pnpm-debug.log*
 reactfront/lerna-debug.log*
-
-#reactfront/node_modules
-#reactfront/dist
-#reactfront/dist-ssr
-#reactfront/*.local
-
-# Editor directories and files
 reactfront/.vscode/*
-reactfront/!.vscode/extensions.json
+!reactfront/.vscode/extensions.json
 reactfront/.idea
-reactfront/.DS_Store
 reactfront/*.suo
 reactfront/*.ntvs*
 reactfront/*.njsproj
 reactfront/*.sln
 reactfront/*.sw?
 
+# ───────── Base de datos local ─────────
+*.sql
 
-
-
-# Base de datos local
-
-
-# Archivos del sistema
+# ───────── General ─────────
+*.log
 .DS_Store
 Thumbs.db
-
-# Docker / temporales
-*.log
-
-# VSCode Local History
 .history/
