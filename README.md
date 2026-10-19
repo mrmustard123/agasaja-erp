@@ -189,9 +189,11 @@ The application is designed as a full-stack practice project, where the backend 
 ## Project Structure
 
 ### Backend (Laravel)
+
 Path: laravel-api/
 
 Contains:
+
 - Laravel configuration
 - models
 - controllers
@@ -200,6 +202,7 @@ Contains:
 - business logic and database access
 
 Common commands:
+
 - cd api
 - composer install
 - cp .env.example .env
@@ -208,9 +211,11 @@ Common commands:
 - php artisan serve
 
 ### Frontend (React)
+
 Path: reactfront/
 
 Contains:
+
 - components
 - pages
 - styles
@@ -218,6 +223,7 @@ Contains:
 - API consumption
 
 Common commands:
+
 - cd reactfront
 - npm install
 - npm start
@@ -234,6 +240,7 @@ Common commands:
 
 The backend needs a valid database configuration in api/.env.
 The frontend normally points to the API with a local URL, for example:
+
 - http://localhost:8741/api
 
 ## Typical Workflow
@@ -377,6 +384,7 @@ https://api.your-domain.com/api
 ## Notes for Assistants or Agents
 
 This project is not a single monolithic app; it is separated by responsibilities:
+
 - laravel-api/ = business logic, persistence, and API
 - reactfront/ = visual interface and data consumption
 
@@ -392,9 +400,10 @@ When working here, it is always advisable to first identify whether the change b
 
 ## Running the Project
 
-To run the full development environment, you need to open two independent terminals, one for the backend and one for the frontend:
+To run the full local development environment, you need to open two independent terminals, one for the backend and one for the frontend:
 
 ### 1. Backend Server (Laravel)
+
 In the terminal, navigate to the API folder and start the server on the configured port:
 
 ```bash
@@ -403,15 +412,16 @@ $ cd laravel-api
 $ php artisan serve --port=8741
 ```
 
-
 ### 2. Frontend Environment (React)
+
 In a second terminal, navigate to the frontend folder and run the development server:
 
 ```bash
 $ cd reactfront
 $ npm run dev
 ```
-Note: The API will be available at http://localhost:8741 and the frontend will connect to it through that URL. Make sure that the environment variables in reactfront/ (or wherever you define the base API URL) point correctly to this port.
+
+Note: The API will be available at http://localhost:5173 and the frontend will connect to it through that URL. Make sure that the environment variables in reactfront/ (or wherever you define the base API URL) point correctly to this port.
 
 ## API Reference (Summary)
 
@@ -426,6 +436,7 @@ Base URL: `http://localhost:8741/api`
 - DELETE `/products/{id}` — Delete product (protected)
 
 Authentication: JWT
+
 - The backend uses `php-open-source-saver/jwt-auth`. After `register` and `login` you will get a JWT `token`.
 - Include the token in protected requests with the header: `Authorization: Bearer <token>`
 
@@ -463,6 +474,7 @@ curl -i -X POST http://127.0.0.1:8741/api/products \
 ```
 
 Migrations and additional steps
+
 - Copy `.env` and configure DB (MySQL) and `APP_URL=http://localhost:8741`.
 - Run:
 
@@ -477,6 +489,7 @@ php artisan serve --port=8741
 ```
 
 Quick Notes
+
 - If you see errors related to CSRF when testing API endpoints, make sure that the API routes are loaded by the API stack (in this project `bootstrap/app.php` has been configured for that).
 - The `User` model implements the required interface for JWT; if you change the JWT package check `app/Models/User.php`.
 - For local development use port `8741` (standardized in this repo).
