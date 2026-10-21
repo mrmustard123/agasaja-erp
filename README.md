@@ -184,7 +184,8 @@ This repository is divided into two main parts:
 
 ## Objective
 
-The application is designed as a full-stack practice project, where the backend exposes a REST API and the frontend consumes those endpoints to display information in the UI.
+The application is re-design from scratch of my old project ERP Don Justo and with the goal of turning it in a general purpose ERP.
+The backend exposes a REST API and the frontend consumes those endpoints to display information in the UI.
 
 ## Project Structure
 
