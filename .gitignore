@@ -1,3 +1,8 @@
+agasaja-erp.code-workspace
+backup1.gitignore.txt
+backup2.gitignore.txt
+chat1_folder.json
+
 # ───────── Laravel (laravel-api) ─────────
 laravel-api/.env
 laravel-api/.env.backup
