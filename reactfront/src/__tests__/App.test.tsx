@@ -1,5 +1,6 @@
 import { render, screen, fireEvent } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
+import { test, expect } from 'vitest'
 import App from '../App'
 
 test('renders welcome page and navigates via login submit to dashboard', async () => {

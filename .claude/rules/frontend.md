@@ -1,5 +1,3 @@
----
-
 ## applyTo: "**/*.{tsx,ts,jsx,js,css,scss,html}"
 
 # Frontend Development Guidelines: Agasaja ERP
@@ -14,7 +12,8 @@ All frontend work must follow a consistent visual philosophy:
 
 - **Minimalist and functional:** Every visual element must serve a purpose. Avoid unnecessary decoration and visual clutter.
 
-- **Compact and space-efficient:** Maximize the space available for business data, tables, forms, filters, and operational workflows.
+- **Compact and space-efficient:** Maximize the space available for business data, tables, forms, filter
+s, and operational workflows.
 
 - **Consistent:** All screens must feel like parts of the same application, sharing common layout rules, colors, typography, spacing, and interaction patterns.
 
@@ -28,59 +27,41 @@ The application must prioritize usability and information density over decorativ
 
 ## 2. Color Palette and Visual Identity
 
-The primary visual identity must be built around **turquoise blue and harmonious complementary colors**.
+The primary visual identity must be built around **indigo blue and harmonious complementary colors**.
 
 Use a restrained, coordinated palette suitable for a professional ERP system.
 
 Suggested palette:
 
-- **Primary turquoise:** `#0F8B8D`
-
-- **Primary dark:** `#115E63`
-
-- **Primary light:** `#DDF4F1`
-
-- **Accent blue:** `#2563A6`
-
-- **Page background:** `#F5F8FA`
-
+- **Primary indigo:** `#4F46E5`
+- **Primary dark:** `#312E81`
+- **Primary light:** `#E0E7FF`
+- **Accent blue:** `#2563EB`
+- **Page background:** `#F7F8FC`
 - **Surface background:** `#FFFFFF`
+- **Primary text:** `#1E293B`
+- **Secondary text:** `#64748B`
+- **Borders and dividers:** `#E2E8F0`
+- **Success:** `#15803D`
+- **Warning:** `#B45309`
+- **Error:** `#B91C1C`
+- **Information:** `#1D4ED8`
 
-- **Primary text:** `#243746`
-
-- **Secondary text:** `#647786`
-
-- **Borders and dividers:** `#DCE5EA`
-
-- **Success:** `#27835B`
-
-- **Warning:** `#B7791F`
-
-- **Error:** `#C24141`
-
-- **Information:** `#2563A6`
-
-These values are initial design references, not permission to introduce a separate palette on every screen. Refine them if necessary to fit the existing application, but preserve a coherent turquoise-centered identity.
+These values are the initial design references. Refine them if necessary to fit the existing application, but preserve a coherent indigo-centered identity.
 
 Color rules:
 
-- Use turquoise for primary actions, selected navigation items, active indicators, and other important interactive elements.
-
-- Use darker turquoise tones for emphasis and readable text on appropriate backgrounds.
-
+- Use indigo for primary actions, selected navigation items, active indicators, and other important interactive elements.
+- Use darker indigo tones for emphasis and readable text on appropriate backgrounds.
+- Use light indigo backgrounds for selected items, subtle highlights, and secondary emphasis.
+- Use accent blue sparingly for links and complementary interactive elements.
 - Use white and subtle neutral backgrounds to maintain a clean, professional appearance.
-
-- Use accent blue sparingly to complement the primary color.
-
 - Reserve success, warning, error, and information colors for their semantic purposes.
-
 - Ensure sufficient contrast between text, backgrounds, borders, and interactive states.
-
 - Do not communicate status through color alone. Include text, icons, or other appropriate indicators.
-
 - Avoid excessive gradients, highly saturated backgrounds, and too many competing accent colors.
-
 - Do not use color merely for decoration when it does not improve comprehension or usability.
+- Centralize color values in the project's existing design-token or theme system instead of scattering hardcoded values throughout individual components.
 
 ## 3. Layout and Information Density
 
@@ -177,6 +158,23 @@ Use the project's existing responsive layout approach and styling conventions.
 - Do not solve a layout problem with arbitrary margins, hardcoded offsets, or empty spacer elements.
 
 The required behavior is based on available viewport width, not on a particular device model.
+
+### 4.4 Content Alignment and Header Layout
+
+All content displayed below the application header must be **left-aligned by default**, not centered.
+
+- Align page titles, dashboard sections, forms, tables, filters, cards, and other content to the left within their available content area.
+- Do not center the main dashboard or page content horizontally using techniques such as `margin-inline: auto`, centered flexbox alignment, or centered grid placement when they conflict with the intended left-aligned layout.
+- Preserve the existing header layout and its intended alignment. These rules apply to the content below the header, not automatically to elements inside the header itself.
+- Preserve the existing responsive relationship between the navigation menu and the main content area.
+- On narrow screens, when the navigation menu opens, the content below the header must remain responsive to the available width and follow the established mobile menu behavior.
+- On wide screens, when the navigation menu opens, the main content must continue to shift to the right, exactly as the existing working layout does.
+- Do not remove, replace, or break the current menu-driven content displacement behavior while correcting alignment.
+- Do not introduce fixed widths, arbitrary offsets, or unnecessary wrapper elements to force left alignment.
+- Inspect the existing layout and identify the actual cause of unwanted centering before modifying CSS or component structure.
+- Keep the content aligned consistently across the dashboard and other application screens, including when the menu is opened or closed.
+
+**Important:** The goal is to correct content alignment, not to redesign the navigation system. Preserve existing working responsive behavior and make only the changes necessary to achieve the intended left alignment.
 
 ## 5. Navigation Styling and Interaction
 
