@@ -1,25 +1,49 @@
 import { render, screen, fireEvent } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
-import { test, expect } from 'vitest'
+import { test, expect, vi } from 'vitest'
 import App from '../App'
 
-test('renders welcome page and navigates via login submit to dashboard', async () => {
-  render(
-    <MemoryRouter initialEntries={["/login"]}>
+test('keeps pre-login pages in a centered public layout', () => {
+  const { unmount } = render(
+    <MemoryRouter initialEntries={['/']}>
       <App />
     </MemoryRouter>,
   )
 
-  // Ensure login form is present
+  expect(screen.getByRole('main').className).toContain('public-page')
+  unmount()
+
+  render(
+    <MemoryRouter initialEntries={['/register']}>
+      <App />
+    </MemoryRouter>,
+  )
+
+  expect(screen.getByRole('main').className).toContain('public-page')
+})
+
+test('renders welcome page and navigates via login submit to dashboard', async () => {
+  vi.stubGlobal(
+    'fetch',
+    vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({ token: 'demo-token' }),
+    }),
+  )
+
+  render(
+    <MemoryRouter initialEntries={['/login']}>
+      <App />
+    </MemoryRouter>,
+  )
+
   const submitButton = screen.getByRole('button', { name: /Iniciar sesión|Login/i })
   expect(submitButton).toBeTruthy()
 
-  // Submit the form to trigger navigation to dashboard
   const form = submitButton.closest('form')
   expect(form).toBeTruthy()
   if (form) fireEvent.submit(form)
 
-  // Dashboard heading should show
   expect(await screen.findByRole('heading', { name: /Panel principal|Dashboard/i })).toBeTruthy()
 })
 

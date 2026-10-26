@@ -64,7 +64,7 @@ export function RegisterPage({ language, onAuthChange }: RegisterPageProps) {
   }
 
   return (
-    <main className="auth-page">
+    <main className="public-page auth-page">
       <section className="auth-card">
         <p className="auth-kicker">{textReg('register')}</p>
         <h2>{textReg('register')}</h2>

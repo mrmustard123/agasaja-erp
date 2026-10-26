@@ -31,7 +31,7 @@ function App() {
         <Route
           path="/"
           element={
-            <main className="welcome-page">
+            <main className="public-page welcome-page">
               <section className="hero-panel">
                 <p className="eyebrow">{t('tagline', language)}</p>
                 <h1>{t('welcomeTitle', language)}</h1>

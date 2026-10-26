@@ -58,7 +58,7 @@ export function LoginPage({ language, onAuthChange }: LoginPageProps) {
   }
 
   return (
-    <main className="auth-page">
+    <main className="public-page auth-page">
       <section className="auth-card">
         <p className="auth-kicker">{textLogin('login')}</p>
         <h2>{textLogin('login')}</h2>
