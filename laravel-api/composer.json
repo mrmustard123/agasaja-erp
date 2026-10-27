@@ -5,6 +5,12 @@
     "description": "The skeleton application for the Laravel framework.",
     "keywords": ["laravel", "framework"],
     "license": "MIT",
+        "authors": [
+          {
+            "name": "Leonardo G. Téllez Saucedo",
+            "email": "leonardo616@gmail.com"
+          }
+]
     "require": {
         "php": "^8.3",
         "laravel/framework": "^13.8",
