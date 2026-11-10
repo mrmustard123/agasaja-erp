@@ -52,5 +52,21 @@
   "menu.apiario.reporte_historia_posiciones_vivas": "Reporte historia de posiciones vivas",
   "menu.apiario.reporte_ultima_revision": "Reporte última revisión",
   "menu.apiario.reporte_cosechas": "Reporte Cosechas",
-  "menu.apiario.mapa_apiarios": "Mapa Apiarios"
+  "menu.apiario.mapa_apiarios": "Mapa Apiarios",
+  "movement.form.date": "Fecha",
+  "movement.form.type": "Tipo de movimiento",
+  "movement.form.product": "Producto",
+  "movement.form.product.placeholder": "ID del producto",
+  "movement.form.quantity": "Cantidad",
+  "movement.form.lot": "Lote",
+  "movement.form.reason": "Motivo",
+  "movement.form.comments": "Comentarios",
+  "movement.form.save": "Guardar movimiento",
+  "movement.form.saving": "Guardando...",
+  "movement.form.searching": "Buscando...",
+  "movement.form.invalidDateFormat": "Formato de fecha inválido. Debe ser yyyy-mm-dd HH:mm:ss.",
+  "movement.form.success": "Movimiento registrado correctamente.",
+  "movement.form.error": "No se pudo guardar el movimiento.",
+  "movement.recent.title": "Movimientos recientes",
+  "movement.recent.empty": "Sin movimientos recientes."
 }

@@ -1,4 +1,5 @@
 import { useParams } from 'react-router-dom'
+import { MovementForm } from '../components/MovementForm'
 import { allMenuItems } from '../data/menu'
 import { t, type Language } from '../i18n'
 
@@ -11,6 +12,16 @@ export function ModuleViewPage({ language }: ModuleViewPageProps) {
   const currentPath = viewKey ? `/dashboard/${viewKey}` : '/dashboard'
   const currentItem = allMenuItems.find((item) => item.path === currentPath)
   const label = currentItem ? t(currentItem.key, language) : t('dashboardTitle', language)
+
+  if (currentPath === '/dashboard/nuevo-movimiento-producto') {
+    return (
+      <section className="module-view-panel">
+        <p className="auth-kicker">{t('dashboardTitle', language)}</p>
+        <h2>{label}</h2>
+        <MovementForm language={language} />
+      </section>
+    )
+  }
 
   return (
     <section className="module-view-panel">

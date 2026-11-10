@@ -7,20 +7,23 @@ use Illuminate\Database\Eloquent\Model;
 class Movement extends Model
 {
     protected $table = 'movement';
-    protected $primaryKey = 'movement_id';
+    protected $primaryKey = 'mov_id';
 
     protected $fillable = [
-        'movement_type', // Entrada, Salida, etc.
-        'movement_date',
-        'consig_id',     // Cliente o proveedor relacionado
-        'user_id',       // Usuario que realizó el movimiento
-        'observations',
+        'mov_type',
+        'mov_date',
+        'mov_cant',
+        'mov_lot',
+        'product_id',
+        'comments',
+        'user_id',
+        'reason',
     ];
 
-    // public function consignee()
-    // {
-    //     return $this->belongsTo(Consignee::class, 'consig_id', 'consig_id');
-    // }
+    public function product()
+    {
+        return $this->belongsTo(Product::class, 'product_id', 'product_id');
+    }
 
     public function user()
     {

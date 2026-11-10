@@ -11,9 +11,10 @@ class Entry extends Model
 
     protected $fillable = [
         'entry_date',
-        'description',
-        'total_amount',
-        'user_id', // Quién registró el asiento
+        'details',
+        'balance',
+        'account_id',
+        'user_id',
     ];
 
     // Relación: Un asiento contable pertenece a un usuario
