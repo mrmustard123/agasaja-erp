@@ -55,3 +55,6 @@ reactfront/*.sw?
 .DS_Store
 Thumbs.db
 .history/
+
+# ───────── Legacy ─────────
+legacy/erpdonjusto
