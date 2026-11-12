@@ -54,6 +54,8 @@ reactfront/*.sw?
 *.log
 .DS_Store
 Thumbs.db
+temp/
+backup/
 
 # ────── Documentation ─────
 Docs/
