@@ -54,10 +54,15 @@ reactfront/*.sw?
 *.log
 .DS_Store
 Thumbs.db
-.history/
 
 # ────── Documentation ─────
 Docs/
 
 # ───────── Legacy ─────────
 legacy/erpdonjusto
+
+# ─── Hidden Directories ───
+.claude/
+.github/
+.vscode/
+.history/
