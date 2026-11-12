@@ -4,6 +4,9 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
+/*README AI AGENT: This model represents all the costs in our system.
+These costs are related to an Account and to a Product*/
+
 class ProductCost extends Model
 {
     protected $table = 'product_cost';

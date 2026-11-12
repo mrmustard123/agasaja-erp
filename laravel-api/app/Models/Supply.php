@@ -11,10 +11,14 @@ class Supply extends Model
 
     protected $fillable = [
         'supply_name',
-        'stock',
         'unit',
-        'unit_cost',
+        'stock',
+        'price',
+        'comments',
         'account_id',
+        'stock_min',
+        'cost_account_id',
+        'prod_cost_id',
     ];
 
     // Relación: Pertenece a una cuenta contable

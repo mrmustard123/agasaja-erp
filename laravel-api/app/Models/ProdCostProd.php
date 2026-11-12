@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
+/*README AI AGENT: This model represents the relationship between a Product and a ProductCost */
+
 class ProdCostProd extends Model
 {
     protected $table = 'prod_cost_prod';

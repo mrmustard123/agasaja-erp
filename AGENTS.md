@@ -1,5 +1,8 @@
 ## applyTo: "**/*.{tsx,ts,jsx,js,css,scss,html}"
 
+# Coding Style
+Agent, always use Allman (BSD) style as possible: put the opening brace on a new line, aligned with the control statement. Put the closing brace on its own line. Use consistent indentation.
+
 # Frontend Development Guidelines: Agasaja ERP
 
 ## 1. Purpose and Design Philosophy

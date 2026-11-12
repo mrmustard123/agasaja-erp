@@ -58,6 +58,44 @@ type MovementFormProps = {
   language: Language
 }
 
+const getMovementTypeLabel = (value: string, language: Language) => {
+  const labels: Record<Language, Record<string, string>> = {
+    es: {
+      ENTRADA: 'ENTRADA',
+      SALIDA: 'SALIDA',
+    },
+    en: {
+      ENTRADA: 'ENTRY',
+      SALIDA: 'EXIT',
+    },
+  }
+
+  return labels[language]?.[value] ?? value
+}
+
+const getMovementReasonLabel = (value: string, language: Language) => {
+  const labels: Record<Language, Record<string, string>> = {
+    es: {
+      PRODUCCION: 'PRODUCCION',
+      COSECHA: 'COSECHA',
+      VENTA: 'VENTA',
+      CONSIGNACION: 'CONSIGNACION',
+      DEVOLUCION: 'DEVOLUCIÓN',
+      ALMACENAJE: 'ALMACENAJE',
+    },
+    en: {
+      PRODUCCION: 'PRODUCTION',
+      COSECHA: 'HARVEST',
+      VENTA: 'SALE',
+      CONSIGNACION: 'CONSIGNMENT',
+      DEVOLUCION: 'RETURN',
+      ALMACENAJE: 'STORAGE',
+    },
+  }
+
+  return labels[language]?.[value] ?? value
+}
+
 const initialFormState: MovementFormState = {
   mov_date: formatLocalDateTime(new Date()),
   mov_type: 'ENTRADA',
@@ -267,8 +305,11 @@ export function MovementForm({ language }: MovementFormProps) {
         <label className="field">
           <span>{t('movement.form.type', language)}</span>
           <select name="mov_type" value={form.mov_type} onChange={handleChange}>
-            <option value="ENTRADA">ENTRADA</option>
-            <option value="SALIDA">SALIDA</option>
+            {(['ENTRADA', 'SALIDA'] as const).map((value) => (
+              <option key={value} value={value}>
+                {getMovementTypeLabel(value, language)}
+              </option>
+            ))}
           </select>
         </label>
 
@@ -328,12 +369,20 @@ export function MovementForm({ language }: MovementFormProps) {
         <label className="field">
           <span>{t('movement.form.reason', language)}</span>
           <select name="reason" value={form.reason} onChange={handleChange}>
-            <option value="PRODUCCION">PRODUCCION</option>
-            <option value="COSECHA">COSECHA</option>
-            <option value="VENTA">VENTA</option>
-            <option value="CONSIGNACION">CONSIGNACION</option>
-            <option value="DEVOLUCION">DEVOLUCION</option>
-            <option value="ALMACENAJE">ALMACENAJE</option>
+            {(
+              [
+                'PRODUCCION',
+                'COSECHA',
+                'VENTA',
+                'CONSIGNACION',
+                'DEVOLUCION',
+                'ALMACENAJE',
+              ] as const
+            ).map((value) => (
+              <option key={value} value={value}>
+                {getMovementReasonLabel(value, language)}
+              </option>
+            ))}
           </select>
         </label>
       </div>
@@ -360,7 +409,7 @@ export function MovementForm({ language }: MovementFormProps) {
               <li key={movement.mov_id}>
                 <strong>{movement.product_name}</strong>
                 <span>
-                  {movement.mov_type} · {movement.mov_cant}
+                  {getMovementTypeLabel(movement.mov_type, language)} · {movement.mov_cant}
                 </span>
                 <small>{movement.mov_date}</small>
               </li>

@@ -56,5 +56,8 @@ reactfront/*.sw?
 Thumbs.db
 .history/
 
+# ────── Documentation ─────
+Docs/
+
 # ───────── Legacy ─────────
 legacy/erpdonjusto

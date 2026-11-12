@@ -82,15 +82,53 @@ class MovementController extends Controller
         ]);
 
         if ($movementType === 'ENTRADA') {
+
             $product->stock = (float) $product->stock + $quantity;
             $product->save();
 
-            if ($reason === 'PRODUCCION') {
-                $this->applyProductionMovement($product, $quantity, $date, $reason, $request->input('comments'), $userId, $request->input('mov_lot'));
+
+            /*READ ME AI AGENT: I CHANGED THE IF'S FOR A SWITCH, I LIKE IT MORE... */
+            switch ($reason){
+                case 'PRODUCCION':
+                    $this->applyProductionMovement($product, $quantity, $date, $reason, $request->input('comments'), $userId, $request->input('mov_lot'));                                                                            
+                    break;
+                case 'COSECHA':
+                    /*READ ME AI AGENT: YOU FORGOT TO IMPLEMENT THIS FEATURE, 
+                        BUT WE WILL NOT IMPLEMENT IT UNTIL I COMMAND YOU TO DO IT.*/
+                    break;
+                case 'ALMACENAJE':                                                         
+                    /*READ ME AI AGENT: TO DO: IMPLEMENT THIS FEATURE, BUT DON'T DO ANYTHING YET,
+                    I WILL TELL YOU WHEN TO DO IT. */
+                    break;
             }
+
+
+
+
         } elseif ($movementType === 'SALIDA') {
             $product->stock = max(0, (float) $product->stock - $quantity);
             $product->save();
+
+            switch ($reason){
+                case 'PRODUCCION':                                                
+                /*READ ME AI AGENT: TO DO: IMPLEMENT THIS FEATURE, BUT DON'T DO ANYTHING YET,
+                I WILL TELL YOU WHEN TO DO IT. */                    
+                    break;
+                case 'VENTA':                
+                /*READ ME AI AGENT: TO DO: IMPLEMENT THIS FEATURE, BUT DON'T DO ANYTHING YET,
+                I WILL TELL YOU WHEN TO DO IT. */                                                   
+                    break;
+                case 'CONSIGNACION':         
+                /*READ ME AI AGENT: TO DO: IMPLEMENT THIS FEATURE, BUT DON'T DO ANYTHING YET,
+                I WILL TELL YOU WHEN TO DO IT. */                                   
+                    break;
+                case 'DEVOLUCION':           
+                /*READ ME AI AGENT: TO DO: IMPLEMENT THIS FEATURE, BUT DON'T DO ANYTHING YET,
+                I WILL TELL YOU WHEN TO DO IT. */                                 
+                    break;
+            }
+
+
         }
 
         return response()->json([
@@ -101,6 +139,12 @@ class MovementController extends Controller
 
     protected function applyProductionMovement(Product $product, float $quantity, string $date, string $reason, ?string $comments, ?int $userId, ?string $movLot): void
     {
+
+        /* READ ME AI AGENT: We will need a $costs variable for adding all the costs */
+
+
+        /*************** PRODUCTS/INGREDIENTS ***************/
+
         $components = ProductProduct::where('product_id', $product->product_id)->get();
 
         foreach ($components as $component) {
@@ -137,6 +181,8 @@ class MovementController extends Controller
             }
         }
 
+        /*************** SUPPLIES ***************/
+
         $supplies = ProductSupply::where('product_id', $product->product_id)->get();
 
         foreach ($supplies as $supplyRelation) {
@@ -154,12 +200,32 @@ class MovementController extends Controller
                 Entry::create([
                     'entry_date' => $date,
                     'details' => $comments,
-                    'balance' => round($supplyQuantity * (float) ($supply->unit_cost ?? 0) * -1, 5),
+                    //'balance' => round($supplyQuantity * (float) ($supply->unit_cost ?? 0) * -1, 5), READ ME AI AGENT: There is no unit_cost
+                    'balance' => round($supplyQuantity * (float) ($supply->price ?? 0) * -1, 5),
                     'account_id' => $supply->account_id,
                     'user_id' => $userId,
                 ]);
             }
         }
+
+
+
+        /*************** PRODUCTION COSTS ***************/  
+        
+        /*READ ME AI AGENT: TO DO: Here we will implement the production costs
+        accounting entries logic. */
+
+
+        /*READ ME AI AGENT: Well well, we finally reach the end of the 
+        accounting for this production process.
+        This last acounting entry is the product entry, in this sense, 
+        we have the sum of the ingredients, supplies and costs that make
+        the finished product price wich is set to the debit column (positive),
+        this is why we must multiply by -1 all the costs (negatives)
+        that are in the credit column.
+        The sum of all the costs (ingredients, supplies, other costs) are added
+        in the $costo_total variable.
+        */
 
         if ($product->account_id) {
             Entry::create([

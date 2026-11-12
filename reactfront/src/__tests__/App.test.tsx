@@ -127,3 +127,24 @@ test('uses the local datetime format with a clear validation message for malform
 
   expect(await screen.findByText(/Formato de fecha inválido|Invalid date format/i)).toBeTruthy()
 })
+
+test('updates movement option labels when the app language changes', async () => {
+  render(
+    <MemoryRouter initialEntries={['/dashboard/nuevo-movimiento-producto']}>
+      <App />
+    </MemoryRouter>,
+  )
+
+  expect(await screen.findByText('ENTRADA')).toBeTruthy()
+  expect(screen.getByRole('option', { name: 'PRODUCCION' })).toBeTruthy()
+
+  fireEvent.change(screen.getByLabelText(/idioma|language/i), { target: { value: 'en' } })
+
+  expect(await screen.findByText('ENTRY')).toBeTruthy()
+  expect(screen.getByRole('option', { name: 'PRODUCTION' })).toBeTruthy()
+
+  fireEvent.change(screen.getByLabelText(/idioma|language/i), { target: { value: 'es' } })
+
+  expect(await screen.findByText('ENTRADA')).toBeTruthy()
+  expect(screen.getByRole('option', { name: 'PRODUCCION' })).toBeTruthy()
+})
