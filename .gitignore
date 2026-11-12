@@ -58,7 +58,7 @@ temp/
 backup/
 
 # ────── Documentation ─────
-Docs/
+docs/
 
 # ───────── Legacy ─────────
 legacy/erpdonjusto
