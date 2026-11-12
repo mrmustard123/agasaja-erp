@@ -59,6 +59,7 @@ backup/
 
 # ────── Documentation ─────
 docs/
+AGENTS.md
 
 # ───────── Legacy ─────────
 legacy/erpdonjusto
