@@ -14,6 +14,12 @@ class ProductController extends Controller
         $search = trim((string) $request->input('search', ''));
         $limit = max(1, min(20, (int) $request->input('limit', 8)));
 
+        $status = $request->input('status', 'ACTIVO');
+
+        if($status !== ''){
+            $query->where('status', $status);
+        }
+
         if ($search !== '') {
             $query->where(function ($builder) use ($search) {
                 $builder->where('product_name', 'like', "%{$search}%")

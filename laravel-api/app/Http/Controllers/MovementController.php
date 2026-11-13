@@ -12,6 +12,7 @@ use App\Models\ProdCostProd;
 use App\Models\Supply;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
 class MovementController extends Controller
@@ -142,6 +143,27 @@ class MovementController extends Controller
         ], 201);
     }
 
+    protected function getProdCostProdByProductId(int $productId)
+    {
+        return DB::table('prod_cost_prod as c')
+            ->join('product as p', 'c.product_id', '=', 'p.product_id')
+            ->join('product_cost as t', 'c.prod_cost_id', '=', 't.prod_cost_id')
+            ->select(
+                'c.prod_cost_prod_id as prod_cost_prod_id',
+                'p.product_name as product_name',
+                't.cost_name as cost_name',
+                'c.cost_value as cost_value',
+                't.account_id as account_id',
+                't.cost_type as cost_type',
+                't.saving_type as saving_type',
+                't.saving_id as saving_id',
+            )
+            ->where('c.product_id', $productId)
+            ->orderBy('p.product_name')
+            ->orderBy('t.cost_name')
+            ->get();
+    }
+
     protected function applyProductionMovement(Product $product, float $mov_quantity, string $date, string $reason, ?string $comments, ?int $userId, ?string $movLot): void
     {
 
@@ -258,53 +280,41 @@ class MovementController extends Controller
         accounting entries logic. */
        
 
-        $ProdCostProds = ProdCostProd::where('product_id', $product->product_id)->get();
+        $prodCostProds = $this->getProdCostProdByProductId((int) $product->product_id);
 
-        foreach($ProdCostProds as $ProdCostProd)
-        {
+        foreach ($prodCostProds as $prodCostProd) {
+            if ($prodCostProd->saving_type == 'MANO DE OBRA' && $prodCostProd->cost_type !== 'ESPECIAL') {
+                $cost = (float) $prodCostProd->cost_value * $mov_quantity * -1;
 
-            if($ProdCostProd->saving_type == 'MANO DE OBRA' && $ProdCostProd->cost_type!=='ESPECIAL')
-            {
+                $total_cost += $cost;
 
-                $cost = $ProdCostProd->cost_value * $mov_quantity * -1;
-
-                $total_cost+= $cost;
-
-                if ( $ProdCostProd->account_id && ($cost!==0) )
-                {                    
+                if ($prodCostProd->account_id && $cost !== 0) {
                     Entry::create([
-                        'account_id' => $ProdCostProd->account_id,                        
+                        'account_id' => $prodCostProd->account_id,
                         'entry_date' => $date,
                         'details' => $comments,
-                        'balance' => round($cost, 5),                        
+                        'balance' => round($cost, 5),
                         'user_id' => $userId,
                     ]);
-                }                
-
-
+                }
             }
 
-            if($ProdCostProd->saving_type == 'PRODUCCION' && $ProdCostProd->cost_type!=='ESPECIAL')
-            {
+            if ($prodCostProd->saving_type == 'PRODUCCION' && $prodCostProd->cost_type !== 'ESPECIAL') {
+                $cost = (float) $prodCostProd->cost_value * $mov_quantity * -1;
 
-                $cost = $ProdCostProd->cost_value * $mov_quantity * -1;
+                $total_cost += $cost;
 
-                $total_cost+= $cost;
-
-                if ( $ProdCostProd->account_id && ($cost!==0) )
-                {                    
+                if ($prodCostProd->account_id && $cost !== 0) {
                     Entry::create([
-                        'account_id' => $ProdCostProd->account_id,                        
+                        'account_id' => $prodCostProd->account_id,
                         'entry_date' => $date,
                         'details' => $comments,
-                        'balance' => round($cost, 5),                        
+                        'balance' => round($cost, 5),
                         'user_id' => $userId,
                     ]);
-                }  
-
+                }
             }
-
-        } //end foreach($ProdCostProds as $ProdCostProd)
+        }
         /***************FIN PRODUCTION COSTS ***************/ 
 
 
@@ -319,6 +329,6 @@ class MovementController extends Controller
                 'user_id' => $userId,
             ]);
         }
-        
+
     } // end protected function applyProductionMovement
 }

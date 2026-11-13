@@ -152,7 +152,8 @@ export function MovementForm({ language }: MovementFormProps) {
     setIsFetchingSuggestions(true)
 
     try {
-      const response = await fetch(`/api/products?search=${encodeURIComponent(trimmed)}&limit=6`, {
+      const statusParam = 'ACTIVO';
+      const response = await fetch(`/api/products?search=${encodeURIComponent(trimmed)}&limit=20&status=${statusParam}`, {
         headers: {
           Accept: 'application/json',
           ...(localStorage.getItem('auth_token')
