@@ -4,9 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\Entry;
 use App\Models\Movement;
+use App\Models\MovSupply;
 use App\Models\Product;
 use App\Models\ProductProduct;
 use App\Models\ProductSupply;
+use App\Models\ProdCostProd;
 use App\Models\Supply;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -65,15 +67,16 @@ class MovementController extends Controller
         }
 
         $movementType = strtoupper((string) $request->input('mov_type'));
-        $quantity = (float) $request->input('mov_cant');
+        $mov_quantity = (float) $request->input('mov_cant');
         $date = $request->input('mov_date');
         $reason = strtoupper((string) ($request->input('reason') ?? ''));
         $userId = $request->user()?->user_id ?? auth()->id();
 
+        /*1.- Salvar el movimiento */
         $movement = Movement::create([
             'mov_type' => $movementType,
             'mov_date' => $date,
-            'mov_cant' => $quantity,
+            'mov_cant' => $mov_quantity,
             'product_id' => $product->product_id,
             'mov_lot' => $request->input('mov_lot'),
             'comments' => $request->input('comments'),
@@ -81,16 +84,18 @@ class MovementController extends Controller
             'reason' => $reason ?: null,
         ]);
 
+        /* 2.- Disminuir por cada movimiento de ENTRADA, el stock de ingredientes de la receta del producto */
         if ($movementType === 'ENTRADA') {
 
-            $product->stock = (float) $product->stock + $quantity;
+            /*2a. Aumentar el stock del producto */
+            $product->stock = (float) $product->stock + $mov_quantity;
             $product->save();
 
 
             /*READ ME AI AGENT: I CHANGED THE IF'S FOR A SWITCH, I LIKE IT MORE... */
             switch ($reason){
                 case 'PRODUCCION':
-                    $this->applyProductionMovement($product, $quantity, $date, $reason, $request->input('comments'), $userId, $request->input('mov_lot'));                                                                            
+                    $this->applyProductionMovement($product, $mov_quantity, $date, $reason, $request->input('comments'), $userId, $request->input('mov_lot'));                                                                            
                     break;
                 case 'COSECHA':
                     /*READ ME AI AGENT: YOU FORGOT TO IMPLEMENT THIS FEATURE, 
@@ -106,7 +111,7 @@ class MovementController extends Controller
 
 
         } elseif ($movementType === 'SALIDA') {
-            $product->stock = max(0, (float) $product->stock - $quantity);
+            $product->stock = max(0, (float) $product->stock - $mov_quantity);
             $product->save();
 
             switch ($reason){
@@ -137,45 +142,62 @@ class MovementController extends Controller
         ], 201);
     }
 
-    protected function applyProductionMovement(Product $product, float $quantity, string $date, string $reason, ?string $comments, ?int $userId, ?string $movLot): void
+    protected function applyProductionMovement(Product $product, float $mov_quantity, string $date, string $reason, ?string $comments, ?int $userId, ?string $movLot): void
     {
 
         /* READ ME AI AGENT: We will need a $costs variable for adding all the costs */
 
+         /*CREAR LOS ASIENTOS EN EL LIBRO DIÁRIO */
 
         /*************** PRODUCTS/INGREDIENTS ***************/
 
+        /*3. Obtener todos los ingredientes del producto */
         $components = ProductProduct::where('product_id', $product->product_id)->get();
 
-        foreach ($components as $component) {
+        $total_cost = 0;
+
+        /*5. Disminuir del stock de cada producto(ingrediente) la cantidad especificada en la 
+            lista de product_products */         
+        foreach ($components as $component) 
+        {
+                  
+            
             $ingredient = Product::find($component->ingredient_id);
 
             if (! $ingredient) {
                 continue;
             }
 
-            $ingredientQuantity = (float) $component->cant * $quantity;
+            $ingredientQuantity = (float) $component->cant * $mov_quantity;
+
+            /*2b. Disminuir el stock del ingrediente */
+            $ingredient->stock = max(0, (float) $ingredient->stock - $ingredientQuantity);
+            $ingredient->save();            
 
             Movement::create([
-                'mov_type' => 'SALIDA',
                 'mov_date' => $date,
+                'mov_type' => 'SALIDA',
                 'mov_cant' => $ingredientQuantity,
                 'product_id' => $ingredient->product_id,
                 'mov_lot' => $movLot,
                 'comments' => $comments,
+                'reason' => $reason,                
                 'user_id' => $userId,
-                'reason' => $reason,
             ]);
 
-            $ingredient->stock = max(0, (float) $ingredient->stock - $ingredientQuantity);
-            $ingredient->save();
+            $price = $ingredient->production_cost;
+            /*Asientos*/
+            $cost = $ingredientQuantity * (float) $price * -1;
 
-            if ($ingredient->account_id && $ingredient->production_cost) {
+            $total_cost += $cost;
+
+            if ( $ingredient->account_id && ($cost!==0) )
+            {
                 Entry::create([
+                    'account_id' => $ingredient->account_id,
                     'entry_date' => $date,
                     'details' => $comments,
-                    'balance' => round($ingredientQuantity * (float) $ingredient->production_cost * -1, 5),
-                    'account_id' => $ingredient->account_id,
+                    'balance' => round($cost, 5),                    
                     'user_id' => $userId,
                 ]);
             }
@@ -183,30 +205,50 @@ class MovementController extends Controller
 
         /*************** SUPPLIES ***************/
 
+        /*5. Obtener los insumos o materiales indirectos */
         $supplies = ProductSupply::where('product_id', $product->product_id)->get();
 
-        foreach ($supplies as $supplyRelation) {
+        /*6. Disminuir el stock de insumos del producto terminado */
+        foreach ($supplies as $supplyRelation) 
+        {
             $supply = Supply::find($supplyRelation->supply_id);
 
             if (! $supply) {
                 continue;
             }
 
-            $supplyQuantity = (float) $supplyRelation->cant * $quantity;
+            $supplyQuantity = (float) $supplyRelation->cant * $mov_quantity;
             $supply->stock = max(0, (float) $supply->stock - $supplyQuantity);
             $supply->save();
 
-            if ($supply->account_id) {
+            MovSupply::create([
+                'mov_supply_type' => 'SALIDA',
+                'mov_supply_date' => $date,
+                'mov_supply_cant' => $supplyQuantity,
+                'mov_supply_lot' => $movLot,
+                'supply_id' => $supply->supply_id,
+                'comments' => $comments ,
+                'user_id' => $userId,
+            ]);
+
+            $price = $supply->price;
+            /*Asientos */
+
+            $cost = $supplyQuantity * (float) $price * -1;
+
+            $total_cost += $cost;    
+
+            if ( $supply->account_id && ($cost!==0) )
+            {                    
                 Entry::create([
+                    'account_id' => $supply->account_id,                        
                     'entry_date' => $date,
                     'details' => $comments,
-                    //'balance' => round($supplyQuantity * (float) ($supply->unit_cost ?? 0) * -1, 5), READ ME AI AGENT: There is no unit_cost
-                    'balance' => round($supplyQuantity * (float) ($supply->price ?? 0) * -1, 5),
-                    'account_id' => $supply->account_id,
+                    'balance' => round($cost, 5),                        
                     'user_id' => $userId,
                 ]);
             }
-        }
+        }//end foreach ($supplies as $supplyRelation) 
 
 
 
@@ -214,27 +256,69 @@ class MovementController extends Controller
         
         /*READ ME AI AGENT: TO DO: Here we will implement the production costs
         accounting entries logic. */
+       
+
+        $ProdCostProds = ProdCostProd::where('product_id', $product->product_id)->get();
+
+        foreach($ProdCostProds as $ProdCostProd)
+        {
+
+            if($ProdCostProd->saving_type == 'MANO DE OBRA' && $ProdCostProd->cost_type!=='ESPECIAL')
+            {
+
+                $cost = $ProdCostProd->cost_value * $mov_quantity * -1;
+
+                $total_cost+= $cost;
+
+                if ( $ProdCostProd->account_id && ($cost!==0) )
+                {                    
+                    Entry::create([
+                        'account_id' => $ProdCostProd->account_id,                        
+                        'entry_date' => $date,
+                        'details' => $comments,
+                        'balance' => round($cost, 5),                        
+                        'user_id' => $userId,
+                    ]);
+                }                
 
 
-        /*READ ME AI AGENT: Well well, we finally reach the end of the 
-        accounting for this production process.
-        This last acounting entry is the product entry, in this sense, 
-        we have the sum of the ingredients, supplies and costs that make
-        the finished product price wich is set to the debit column (positive),
-        this is why we must multiply by -1 all the costs (negatives)
-        that are in the credit column.
-        The sum of all the costs (ingredients, supplies, other costs) are added
-        in the $costo_total variable.
-        */
+            }
+
+            if($ProdCostProd->saving_type == 'PRODUCCION' && $ProdCostProd->cost_type!=='ESPECIAL')
+            {
+
+                $cost = $ProdCostProd->cost_value * $mov_quantity * -1;
+
+                $total_cost+= $cost;
+
+                if ( $ProdCostProd->account_id && ($cost!==0) )
+                {                    
+                    Entry::create([
+                        'account_id' => $ProdCostProd->account_id,                        
+                        'entry_date' => $date,
+                        'details' => $comments,
+                        'balance' => round($cost, 5),                        
+                        'user_id' => $userId,
+                    ]);
+                }  
+
+            }
+
+        } //end foreach($ProdCostProds as $ProdCostProd)
+        /***************FIN PRODUCTION COSTS ***************/ 
+
+
+
 
         if ($product->account_id) {
             Entry::create([
+                'account_id' => $product->account_id,
                 'entry_date' => $date,
                 'details' => $comments,
-                'balance' => round($quantity * (float) ($product->production_cost ?? 0), 5),
-                'account_id' => $product->account_id,
+                'balance' => round($total_cost * -1, 5),                
                 'user_id' => $userId,
             ]);
         }
-    }
+        
+    } // end protected function applyProductionMovement
 }
