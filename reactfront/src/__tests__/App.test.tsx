@@ -2,6 +2,7 @@ import { render, screen, fireEvent } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
 import { test, expect, vi } from 'vitest'
 import App from '../App'
+import { normalizeDateValue } from '../components/JournalBook'
 
 test('keeps pre-login pages in a centered public layout', () => {
   const { unmount } = render(
@@ -126,6 +127,59 @@ test('uses the local datetime format with a clear validation message for malform
   fireEvent.submit((dateInput as HTMLInputElement).closest('form') as HTMLFormElement)
 
   expect(await screen.findByText(/Formato de fecha inválido|Invalid date format/i)).toBeTruthy()
+})
+
+test('normalizes localized journal date strings to yyyy-mm-dd regardless of the active language', () => {
+  expect(normalizeDateValue('01/11/2026', 'es')).toBe('2026-11-01')
+  expect(normalizeDateValue('11/01/2026', 'en')).toBe('2026-11-01')
+  expect(normalizeDateValue('2026-11-01', 'es')).toBe('2026-11-01')
+})
+
+test('renders the accounting journal book with an applied date range', async () => {
+  const fetchMock = vi.fn().mockResolvedValue({
+    ok: true,
+    json: async () => [
+      {
+        entry_id: 12,
+        entry_date: '2026-11-03 09:00:00',
+        account_code: '1.01.01',
+        account_name: 'Caja',
+        details: 'Cobro por venta',
+        balance: 1500,
+        document_number: 'A-1001',
+      },
+      {
+        entry_id: 13,
+        entry_date: '2026-11-03 09:00:00',
+        account_code: '4.01.01',
+        account_name: 'Ventas',
+        details: 'Cobro por venta',
+        balance: -1500,
+        document_number: 'A-1001',
+      },
+    ],
+  })
+
+  vi.stubGlobal('fetch', fetchMock)
+
+  render(
+    <MemoryRouter initialEntries={['/dashboard/libro-diario']}>
+      <App />
+    </MemoryRouter>,
+  )
+
+  expect(await screen.findByRole('heading', { name: /libro diario|daily book/i })).toBeTruthy()
+
+  fireEvent.change(screen.getByLabelText(/desde|from/i), { target: { value: '2026-11-01' } })
+  fireEvent.change(screen.getByLabelText(/hasta|to/i), { target: { value: '2026-11-30' } })
+  fireEvent.click(screen.getByRole('button', { name: /aplicar|apply/i }))
+
+  expect(fetchMock).toHaveBeenCalledWith(
+    '/api/journal-entries?start_date=2026-11-01&end_date=2026-11-30',
+    expect.objectContaining({
+      headers: expect.objectContaining({ Accept: 'application/json' }),
+    }),
+  )
 })
 
 test('updates movement option labels when the app language changes', async () => {

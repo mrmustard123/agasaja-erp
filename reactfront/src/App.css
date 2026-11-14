@@ -308,8 +308,10 @@
 }
 
 .dashboard-workspace {
-  flex: 1;
+  flex: 1 1 auto;
   min-width: 0;
+  display: flex;
+  align-items: stretch;
   transition: margin-left 0.25s ease;
 }
 
@@ -441,7 +443,9 @@
 }
 
 .module-view-panel {
-  width: min(920px, 100%);
+  width: 100%;
+  max-width: none;
+  flex: 1 1 auto;
   background: rgba(255, 255, 255, 0.94);
   border: 1px solid #e2e8f0;
   border-radius: 1.3rem;
@@ -470,6 +474,97 @@
 
 .module-placeholder small {
   color: #647786;
+}
+
+.journal-book {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.journal-filter-panel {
+  background: #f7f8fc;
+  border: 1px solid #e2e8f0;
+  border-radius: 1rem;
+  padding: 1rem;
+}
+
+.journal-filter-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  gap: 1rem;
+}
+
+.journal-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  min-width: 180px;
+  color: #415566;
+  font-weight: 600;
+}
+
+.journal-field input {
+  border: 1px solid #dfe7ef;
+  border-radius: 0.75rem;
+  padding: 0.8rem 0.85rem;
+  background: #fff;
+  color: #1e293b;
+  font: inherit;
+  min-height: 2.9rem;
+}
+
+.journal-field input:focus {
+  outline: none;
+  border-color: #4f46e5;
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.12);
+}
+
+.status-banner {
+  margin: 0;
+  padding: 0.8rem 0.9rem;
+  border-radius: 0.7rem;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  color: #475569;
+}
+
+.journal-table-wrapper {
+  overflow-x: auto;
+  border: 1px solid #e2e8f0;
+  border-radius: 1rem;
+  background: #fff;
+}
+
+.journal-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 980px;
+}
+
+.journal-table th,
+.journal-table td {
+  padding: 0.8rem 0.75rem;
+  border-bottom: 1px solid #e2e8f0;
+  text-align: left;
+  vertical-align: top;
+  font-size: 0.92rem;
+}
+
+.journal-table th {
+  background: #eef2ff;
+  color: #312e81;
+  font-weight: 700;
+}
+
+.journal-table tbody tr:hover {
+  background: #f8fafc;
+}
+
+.journal-table td {
+  color: #1e293b;
 }
 
 .movement-form {

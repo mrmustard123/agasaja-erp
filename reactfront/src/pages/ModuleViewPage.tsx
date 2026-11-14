@@ -1,4 +1,5 @@
 import { useParams } from 'react-router-dom'
+import { JournalBook } from '../components/JournalBook'
 import { MovementForm } from '../components/MovementForm'
 import { allMenuItems } from '../data/menu'
 import { t, type Language } from '../i18n'
@@ -19,6 +20,16 @@ export function ModuleViewPage({ language }: ModuleViewPageProps) {
         <p className="auth-kicker">{t('dashboardTitle', language)}</p>
         <h2>{label}</h2>
         <MovementForm language={language} />
+      </section>
+    )
+  }
+
+  if (currentPath === '/dashboard/libro-diario') {
+    return (
+      <section className="module-view-panel">
+        <p className="auth-kicker">{t('dashboardTitle', language)}</p>
+        <h2>{label}</h2>
+        <JournalBook language={language} />
       </section>
     )
   }
