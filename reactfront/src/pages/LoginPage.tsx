@@ -1,13 +1,14 @@
 import { useState, type SyntheticEvent } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { t, type Language } from '../i18n'
+import { useAuth } from '../auth/authContext'
 
 type LoginPageProps = {
   language: Language
-  onAuthChange?: () => void
 }
 
-export function LoginPage({ language, onAuthChange }: LoginPageProps) {
+export function LoginPage({ language }: LoginPageProps) {
+  const { login } = useAuth()
   const textLogin = (key: string) => t(key, language)
   const navigate = useNavigate()
 
@@ -40,15 +41,14 @@ export function LoginPage({ language, onAuthChange }: LoginPageProps) {
       }
 
       // Adjust the key to whatever your /login actually returns
-      const token = data?.access_token ?? data?.token
+      const token = data?.token
 
       if (!token) {
         setError(language === 'es' ? 'Respuesta inesperada del servidor' : 'Unexpected server response')
         return
       }
 
-      localStorage.setItem('auth_token', token)
-      onAuthChange?.()
+      login(token)
       navigate('/dashboard')
     } catch {
       setError(language === 'es' ? 'No se pudo conectar con el servidor' : 'Could not reach the server')

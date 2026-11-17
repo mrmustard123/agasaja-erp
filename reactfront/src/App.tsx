@@ -6,17 +6,19 @@ import { t, type Language } from './i18n'
 import { LoginPage } from './pages/LoginPage'
 import { RegisterPage } from './pages/RegisterPage'
 import { DashboardPage } from './pages/DashboardPage'
+import { useAuth } from './auth/authContext'
+import { RequireAuth } from './auth/RequireAuth'
 
 function App() {
-  const [language, setLanguage] = useState<Language>('es')
-  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(() => Boolean(localStorage.getItem('auth_token')))
+  const [language, setLanguage] = useState<Language>('es')  
+  const { isLoggedIn, logout } = useAuth()  
   const navigate = useNavigate()
 
   const handleLogout = () => {
-    localStorage.removeItem('auth_token')
-    setIsLoggedIn(false)
+    logout()
     navigate('/login')
   }
+
 
   return (
     <div className="app-shell">
@@ -52,14 +54,16 @@ function App() {
 
         <Route
           path="/login"
-          element={<LoginPage language={language} onAuthChange={() => setIsLoggedIn(true)} />}
+          element={<LoginPage language={language} />}
         />
         <Route
           path="/register"
-          element={<RegisterPage language={language} onAuthChange={() => setIsLoggedIn(true)} />}
+          element={<RegisterPage language={language} />}
         />
-        <Route path="/dashboard" element={<DashboardPage language={language} />} />
-        <Route path="/dashboard/:viewKey" element={<DashboardPage language={language} />} />
+        <Route element={<RequireAuth />}>
+          <Route path="/dashboard" element={<DashboardPage language={language} />} />
+          <Route path="/dashboard/:viewKey" element={<DashboardPage language={language} />} />
+        </Route>
       </Routes>
     </div>
   )

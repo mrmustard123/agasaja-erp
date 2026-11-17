@@ -1,13 +1,14 @@
 import { type SyntheticEvent, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { t, type Language } from '../i18n'
+import { useAuth } from '../auth/authContext'
 
 type RegisterPageProps = {
   language: Language
-  onAuthChange?: () => void
 }
 
-export function RegisterPage({ language, onAuthChange }: RegisterPageProps) {
+export function RegisterPage({ language}: RegisterPageProps) {
+  const { login } = useAuth()
   const textReg = (key: string) => t(key, language)
   const navigate = useNavigate()
   const [loading, setLoading] = useState(false)
@@ -34,7 +35,7 @@ export function RegisterPage({ language, onAuthChange }: RegisterPageProps) {
         body: JSON.stringify(payload),
       })
 
-      const data = await res.json()
+      const data = await res.json().catch(() => null)
 
       if (!res.ok) {
         if (data && data.errors) {
@@ -46,15 +47,17 @@ export function RegisterPage({ language, onAuthChange }: RegisterPageProps) {
           setErrors('Registration failed')
         }
 
-        setLoading(false)
         return
       }
 
-      // store token and navigate
-      if (data.token) {
-        localStorage.setItem('auth_token', data.token)
-        onAuthChange?.()
+      const token = data?.token
+
+      if (!token) {
+        setErrors(language === 'es' ? 'Respuesta inesperada del servidor' : 'Unexpected server response')
+        return
       }
+
+      login(token)
       navigate('/dashboard')
     } catch (err) {
       setErrors('Network error')

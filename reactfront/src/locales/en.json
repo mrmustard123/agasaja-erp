@@ -83,5 +83,6 @@
   "movement.form.success": "Movement registered successfully.",
   "movement.form.error": "Unable to save movement.",
   "movement.recent.title": "Recent movements",
-  "movement.recent.empty": "No recent movements yet."
+  "movement.recent.empty": "No recent movements yet.",
+  "journalBook.filter.datePlaceholder": "yyyy-MM-dd"
 }

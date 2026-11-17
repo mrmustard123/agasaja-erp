@@ -1,5 +1,19 @@
+/*
+READ ME AGENT
+TO DO IN THIS VIEW:
+- Implement an excel file export function.
+
+
+*/
 import { useEffect, useState } from 'react'
+import DatePicker from 'react-datepicker'
+import type { Locale } from 'date-fns'
+import { enUS } from 'date-fns/locale/en-US'
+import { es } from 'date-fns/locale/es'
+import 'react-datepicker/dist/react-datepicker.css'
 import { t, type Language } from '../i18n'
+import { useAuth } from '../auth/authContext'
+
 
 type JournalEntry = {
   entry_id: number
@@ -11,6 +25,16 @@ type JournalEntry = {
   document_number: string | null
 }
 
+// Locale del calendario por idioma de la app. Al ser un Record<Language, ...>,
+// TypeScript te obliga a agregar una entrada cuando sumes un idioma nuevo.
+const DATEPICKER_LOCALES: Record<Language, Locale> = {
+  es,
+  en: enUS,
+}
+
+// Formato que ve el usuario (fijo para todos los idiomas). Ojo: MM = mes, mm = minutos.
+const DATE_DISPLAY_FORMAT = 'yyyy-MM-dd'
+
 const formatInputDate = (value: Date) => {
   const year = value.getFullYear()
   const month = `${value.getMonth() + 1}`.padStart(2, '0')
@@ -19,64 +43,24 @@ const formatInputDate = (value: Date) => {
   return `${year}-${month}-${day}`
 }
 
-export const normalizeDateValue = (value: string, language: Language) => {
-  const trimmedValue = value.trim()
-
-  if (!trimmedValue) {
-    return ''
+// Inversa de formatInputDate. Construye la fecha con componentes locales
+// (new Date('2024-03-05') se interpreta como UTC y puede mostrar el día anterior).
+const parseInputDate = (value: string): Date | null => {
+  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value)
+  if (!match) {
+    return null
   }
 
-  const isoMatch = /^\d{4}-\d{2}-\d{2}$/.exec(trimmedValue)
-  if (isoMatch) {
-    return trimmedValue
+  const year = Number(match[1])
+  const month = Number(match[2])
+  const day = Number(match[3])
+  const date = new Date(year, month - 1, day)
+
+  if (date.getFullYear() !== year || date.getMonth() !== month - 1 || date.getDate() !== day) {
+    return null
   }
 
-  const yearFirstMatch = /^\d{4}[/-]\d{1,2}[/-]\d{1,2}$/.exec(trimmedValue)
-  if (yearFirstMatch) {
-    const [year, month, day] = trimmedValue.split(/[/-]/)
-    const normalizedMonth = Number(month).toString().padStart(2, '0')
-    const normalizedDay = Number(day).toString().padStart(2, '0')
-
-    return `${year}-${normalizedMonth}-${normalizedDay}`
-  }
-
-  const localizedMatch = /^\d{1,2}[/-]\d{1,2}[/-]\d{4}$/.exec(trimmedValue)
-  if (!localizedMatch) {
-    return trimmedValue
-  }
-
-  const [firstPart, secondPart, yearPart] = trimmedValue.split(/[/-]/)
-  const firstValue = Number(firstPart)
-  const secondValue = Number(secondPart)
-  const year = Number(yearPart)
-
-  if (!Number.isFinite(year) || !Number.isFinite(firstValue) || !Number.isFinite(secondValue)) {
-    return trimmedValue
-  }
-
-  const isDayFirst = language === 'es'
-  const day = isDayFirst ? firstValue : secondValue
-  const month = isDayFirst ? secondValue : firstValue
-
-  if (month < 1 || month > 12) {
-    return trimmedValue
-  }
-
-  const date = new Date(Date.UTC(year, month - 1, day))
-
-  if (
-    date.getUTCFullYear() !== year ||
-    date.getUTCMonth() !== month - 1 ||
-    date.getUTCDate() !== day
-  ) {
-    return trimmedValue
-  }
-
-  return [
-    date.getUTCFullYear(),
-    `${date.getUTCMonth() + 1}`.padStart(2, '0'),
-    `${date.getUTCDate()}`.padStart(2, '0'),
-  ].join('-')
+  return date
 }
 
 const getDefaultStartDate = () => {
@@ -112,42 +96,59 @@ const getCredit = (value: number | string | null) => {
   return numericValue < 0 ? Math.abs(numericValue) : 0
 }
 
+type DateFieldProps = {
+  id: string
+  value: string // siempre yyyy-mm-dd, o '' si está vacío
+  language: Language
+  onChange: (value: string) => void
+}
+
+function DateField({ id, value, language, onChange }: DateFieldProps) {
+  return (
+    <DatePicker
+      id={id}
+      selected={parseInputDate(value)}
+      onChange={(date: Date | null) => onChange(date ? formatInputDate(date) : '')}
+      dateFormat={DATE_DISPLAY_FORMAT}
+      locale={DATEPICKER_LOCALES[language]}
+      placeholderText={t('journalBook.filter.datePlaceholder', language)}
+      strictParsing
+      autoComplete="off"
+      showMonthDropdown
+      showYearDropdown
+      showIcon
+      dropdownMode="select"
+    />
+  )
+}
+
 export function JournalBook({ language }: { language: Language }) {
+
+  const { apiFetch } = useAuth()
   const [startDate, setStartDate] = useState<string>(getDefaultStartDate)
   const [endDate, setEndDate] = useState<string>(getDefaultEndDate)
   const [entries, setEntries] = useState<JournalEntry[]>([])
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState('')
 
+
+
   const loadEntries = async (nextStartDate = startDate, nextEndDate = endDate) => {
-    const trimmedStart = normalizeDateValue(nextStartDate.trim(), language)
-    const trimmedEnd = normalizeDateValue(nextEndDate.trim(), language)
-
-    if (!trimmedStart || !trimmedEnd) {
+    // Las fechas del estado ya son yyyy-mm-dd (o ''), así que se comparan como texto
+    if (!nextStartDate || !nextEndDate || nextStartDate > nextEndDate) {
       setEntries([])
       setError(t('journalBook.invalidRange', language))
       return
     }
 
-    if (trimmedStart > trimmedEnd) {
-      setEntries([])
-      setError(t('journalBook.invalidRange', language))
-      return
-    }
-
-    const nextRequestUrl = `/api/journal-entries?start_date=${encodeURIComponent(trimmedStart)}&end_date=${encodeURIComponent(trimmedEnd)}`
+    const nextRequestUrl = `/api/journal-entries?start_date=${encodeURIComponent(nextStartDate)}&end_date=${encodeURIComponent(nextEndDate)}`
 
     setIsLoading(true)
     setError('')
 
     try {
-      const token = localStorage.getItem('auth_token')
-      const response = await fetch(nextRequestUrl, {
-        headers: {
-          Accept: 'application/json',
-          ...(token ? { Authorization: `Bearer ${token}` } : {}),
-        },
-      })
+      
+      const response = await apiFetch(nextRequestUrl)
 
       if (!response.ok) {
         const payload = await response.json().catch(() => ({}))
@@ -177,23 +178,31 @@ export function JournalBook({ language }: { language: Language }) {
     <section className="journal-book" aria-live="polite">
       <div className="journal-filter-panel">
         <div className="journal-filter-row">
-          <label className="journal-field">
-            <span>{t('journalBook.filter.from', language)}</span>
-            <input
-              type="date"
+          {/* div + label htmlFor (no <label> envolvente): dentro de un <label>, los clicks
+              del calendario se reenvían al input y el calendario se vuelve a abrir */}
+          <div className="journal-field">
+            <label htmlFor="journal-start-date">
+              <span>{t('journalBook.filter.from', language)}</span>
+            </label>
+            <DateField
+              id="journal-start-date"
               value={startDate}
-              onChange={(event) => setStartDate(normalizeDateValue(event.target.value, language))}
+              language={language}
+              onChange={setStartDate}
             />
-          </label>
+          </div>
 
-          <label className="journal-field">
-            <span>{t('journalBook.filter.to', language)}</span>
-            <input
-              type="date"
+          <div className="journal-field">
+            <label htmlFor="journal-end-date">
+              <span>{t('journalBook.filter.to', language)}</span>
+            </label>
+            <DateField
+              id="journal-end-date"
               value={endDate}
-              onChange={(event) => setEndDate(normalizeDateValue(event.target.value, language))}
+              language={language}
+              onChange={setEndDate}
             />
-          </label>
+          </div>
 
           <button type="button" className="primary-button" onClick={applyFilter} disabled={isLoading}>
             {isLoading ? t('journalBook.filter.loading', language) : t('journalBook.filter.apply', language)}

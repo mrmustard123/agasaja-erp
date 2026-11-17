@@ -1,5 +1,6 @@
 import { useEffect, useState, type ChangeEvent, type FormEvent } from 'react'
 import { t, type Language } from '../i18n'
+import { useAuth } from '../auth/authContext'
 
 const DATETIME_FORMAT = /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/
 
@@ -106,7 +107,14 @@ const initialFormState: MovementFormState = {
   comments: '',
 }
 
+
+
+
+
+
 export function MovementForm({ language }: MovementFormProps) {
+
+  const { apiFetch } = useAuth()
   const [form, setForm] = useState<MovementFormState>(initialFormState)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState('')
@@ -118,16 +126,11 @@ export function MovementForm({ language }: MovementFormProps) {
   const [isFetchingSuggestions, setIsFetchingSuggestions] = useState(false)
   const [showSuggestions, setShowSuggestions] = useState(false)
 
+  //const response = await apiFetch(nextRequestUrl)
+
   const fetchRecentMovements = async () => {
     try {
-      const response = await fetch('/api/movements/recent?limit=5', {
-        headers: {
-          Accept: 'application/json',
-          ...(localStorage.getItem('auth_token')
-            ? { Authorization: `Bearer ${localStorage.getItem('auth_token')}` }
-            : {}),
-        },
-      })
+      const response = await apiFetch('/api/movements/recent?limit=5')
 
       if (!response.ok) {
         return
@@ -153,14 +156,7 @@ export function MovementForm({ language }: MovementFormProps) {
 
     try {
       const statusParam = 'ACTIVO';
-      const response = await fetch(`/api/products?search=${encodeURIComponent(trimmed)}&limit=20&status=${statusParam}`, {
-        headers: {
-          Accept: 'application/json',
-          ...(localStorage.getItem('auth_token')
-            ? { Authorization: `Bearer ${localStorage.getItem('auth_token')}` }
-            : {}),
-        },
-      })
+      const response = await apiFetch(`/api/products?search=${encodeURIComponent(trimmed)}&limit=20&status=${statusParam}`)
 
       if (!response.ok) {
         setProductSuggestions([])
@@ -246,14 +242,12 @@ export function MovementForm({ language }: MovementFormProps) {
     setDateError('')
 
     try {
-      const token = localStorage.getItem('auth_token')
-      const response = await fetch('/api/movements', {
+      
+      const response = await apiFetch('/api/movements', {
         method: 'POST',
         headers: {
           Accept: 'application/json',
-          'Content-Type': 'application/json',
-          ...(token ? { Authorization: `Bearer ${token}` } : {}),
-        },
+          'Content-Type': 'application/json'},
         body: JSON.stringify({
           mov_date: form.mov_date,
           mov_type: form.mov_type,

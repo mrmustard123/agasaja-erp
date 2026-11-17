@@ -1,68 +1,43 @@
 import {useEffect, useMemo, useState } from 'react'
-import { useParams, useNavigate } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import { SidebarMenu } from '../components/SidebarMenu'
 import { allMenuItems } from '../data/menu'
 import { t, type Language } from '../i18n'
 import { ModuleViewPage } from './ModuleViewPage'
-//import {  useNavigate } from 
+import { useAuth } from '../auth/authContext'
 
 type DashboardProps = {
   language: Language
 }
 
 export function DashboardPage({ language }: DashboardProps) {
-  const navigate = useNavigate()
+
   const { viewKey } = useParams()
   const [isSidebarOpen, setIsSidebarOpen] = useState(true)
   const [allowedIds, setAllowedIds] = useState<number[] | null>(null)
 
+  const { apiFetch } = useAuth()
+
   useEffect(() => {
-    const token = localStorage.getItem('auth_token')
 
-    if (!token) {
-      return
-    }
+    let ignore = false
 
-    fetch('/api/user-functionalities', {
-      method: 'GET',
-      headers: {
-        Authorization: `Bearer ${token}`,
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
+    apiFetch('/api/user-functionalities')
+    .then((response) => (response.ok ? response.json() : null))
+    .then((data) => {
+      if (ignore || !data) return
+      const functionalities = Array.isArray(data.functionalities) ? data.functionalities : []
+      setAllowedIds(functionalities.map(Number))
     })
-      .then((response) => {
+    .catch(() => {
+        if (!ignore) setAllowedIds(null)
+    })
 
-        if (response.status === 401) {
-          localStorage.removeItem('auth_token')
-          navigate('/login')   // const navigate = useNavigate() at the top of the component
-          return null
-        }
+    return () => {
+      ignore = true
+    }      
 
-        if (!response.ok) {
-          return null
-        }
-        console.log("response: ", response.json);
-        return response.json()
-      })
-      .then((data) => {
-        console.log('response data:', data)
-        if (!data) {
-          return
-        }
-
-        //Here we assign the response to functionalities
-        const functionalites = Array.isArray(data.functionalities) ? data.functionalities : []
-        
-        //Here we assign functionalities to allowdIds        
-        setAllowedIds(functionalites.map(Number))
-
-      })
-      .catch(() => {
-        console.log('catch: ', "No response setting null");
-        setAllowedIds(null)
-      })
-  }, [])
+  },[apiFetch])
 
 
 

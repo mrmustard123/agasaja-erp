@@ -23,6 +23,38 @@ test('keeps pre-login pages in a centered public layout', () => {
   expect(screen.getByRole('main').className).toContain('public-page')
 })
 
+test('stores the auth token in sessionStorage instead of persistent localStorage', async () => {
+  sessionStorage.clear()
+  localStorage.clear()
+
+  vi.stubGlobal(
+    'fetch',
+    vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({ token: 'demo-token' }),
+    }),
+  )
+
+  render(
+    <MemoryRouter initialEntries={['/login']}>
+      <App />
+    </MemoryRouter>,
+  )
+
+  fireEvent.change(screen.getByLabelText(/email/i), { target: { value: 'user@example.com' } })
+  fireEvent.change(screen.getByPlaceholderText('••••••••'), { target: { value: 'secret123' } })
+
+  const submitButton = screen.getByRole('button', { name: /Iniciar sesión|Login/i })
+  const form = submitButton.closest('form')
+  expect(form).toBeTruthy()
+
+  if (form) fireEvent.submit(form)
+
+  expect(await screen.findByRole('heading', { name: /Panel principal|Dashboard/i })).toBeTruthy()
+  expect(sessionStorage.getItem('auth_token')).toBe('demo-token')
+  expect(localStorage.getItem('auth_token')).toBeNull()
+})
+
 test('renders welcome page and navigates via login submit to dashboard', async () => {
   vi.stubGlobal(
     'fetch',

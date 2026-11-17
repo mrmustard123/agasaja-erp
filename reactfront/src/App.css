@@ -862,3 +862,32 @@
     padding: 1rem;
   }
 }
+
+.react-datepicker .react-datepicker__current-month {
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1.5;
+  margin: 0;
+}
+.react-datepicker-wrapper .react-datepicker__input-container .react-datepicker__calendar-icon {
+  top: 50%;
+  right: 0;
+  transform: translateY(-50%);
+  z-index: 1;
+}
+
+.react-datepicker-wrapper .react-datepicker__input-container input {
+  padding-left: 0.75rem; /* poné el mismo padding-left que tus otros inputs */
+  padding-right: 2.25rem; /* espacio para que el texto no quede debajo del ícono */
+}
+
+/* 1. El wrapper se ajusta al input en vez de estirarse */
+.journal-field .react-datepicker-wrapper {
+  width: fit-content;
+}
+
+/* 2. Ancho del input: 10 caracteres (yyyy-mm-dd) + paddings (3rem) + margen */
+.journal-field .react-datepicker-wrapper .react-datepicker__input-container input {
+  box-sizing: border-box;
+  width: calc(10ch + 4rem);
+}
