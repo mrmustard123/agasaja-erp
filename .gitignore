@@ -19,10 +19,6 @@ laravel-api/.zed
 laravel-api/_ide_helper.php
 laravel-api/Homestead.json
 laravel-api/Homestead.yaml
-laravel-api/public/build
-laravel-api/public/fonts-manifest.dev.json
-laravel-api/public/hot
-laravel-api/public/storage
 laravel-api/storage/*.key
 laravel-api/storage/pail
 # vendor se sube a propósito: NO ignorarlo
