@@ -1,5 +1,6 @@
+//App.tsx
 import { useState } from 'react'
-import { Route, Routes, useNavigate } from 'react-router-dom'
+import { Link, Route, Routes, useNavigate } from 'react-router-dom'
 import './App.css'
 import { Header } from './components/Header'
 import { t, type Language } from './i18n'
@@ -38,14 +39,13 @@ function App() {
                 <p className="eyebrow">{t('tagline', language)}</p>
                 <h1>{t('welcomeTitle', language)}</h1>
                 <p className="subtitle">{t('welcomeSubtitle', language)}</p>
-
                 <div className="cta-row">
-                  <a href="/login" className="primary-button">
+                  <Link to="/login" className="primary-button">
                     {t('login', language)}
-                  </a>
-                  <a href="/register" className="secondary-button">
+                  </Link>
+                  <Link to="/register" className="secondary-button">
                     {t('register', language)}
-                  </a>
+                  </Link>
                 </div>
               </section>
             </main>

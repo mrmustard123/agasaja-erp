@@ -20,6 +20,12 @@ DirectoryIndex index.html index.php
     RewriteCond %{REQUEST_URI} (.+)/$
     RewriteRule ^ %1 [L,R=301]
 
+    # Fallback de la SPA (todo lo que no sea API)
+    RewriteCond %{REQUEST_URI} !^/(api|storage|up)(/|$)
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^ index.html [L]
+
     # Send Requests To Front Controller...
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteCond %{REQUEST_FILENAME} !-f
